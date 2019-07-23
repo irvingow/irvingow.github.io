@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在Li">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下r,w,x权限对目录和文件的意义">
+<meta property="og:url" content="http://yoursite.com/2019/03/29/linux下r,w,x权限对目录和文件的意义/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在Li">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-db1db48af262a34d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-2ebf9bcfaff59c41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-0795d8dd73261554.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-df606b137ef1d2a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-3c7d93252f87b9e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-bda80f6fa4319ed3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-5585f89bb5a6728f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-4a540b433ae76cdd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-1cac6dd46707f50c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-7d41209f7d96ccd3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-5c87eb8d859b35cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux下r,w,x权限对目录和文件的意义">
+<meta name="twitter:description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在Li">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-db1db48af262a34d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/29/linux下r,w,x权限对目录和文件的意义/">
+
+
+
+
+
+  <title>linux下r,w,x权限对目录和文件的意义 | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/29/linux下r,w,x权限对目录和文件的意义/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux下r,w,x权限对目录和文件的意义</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-29T15:49:55+08:00">
+                2019-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="实习遇到需要检测目录的可用性-这里记录一下Linux系统下r-w-x权限对目录和文件的意义-以前看unix环境高级编程的时候好像看过-不过印象不深-这里记录一下"><a href="#实习遇到需要检测目录的可用性-这里记录一下Linux系统下r-w-x权限对目录和文件的意义-以前看unix环境高级编程的时候好像看过-不过印象不深-这里记录一下" class="headerlink" title="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下."></a>实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下.</h3><ol>
+<li><p>首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-db1db48af262a34d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-2ebf9bcfaff59c41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br><img src="https://upload-images.jianshu.io/upload_images/5550522-0795d8dd73261554.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>我们可以看到, 在Linux下文件的权限有10位, 第一位代表的是文件的类型, 如果是目录的话就是d,也就是英文目录的首字母, 如果只是普通文件的话就是-, 如果是其他类型文件的话还可能有其他的标志, 这里不具体介绍, 不过由于Linux下一切皆文件, 所以类型还是蛮多的, 比如有l是符号链接文件, 字符设备是c, 块设备文件是b, 其他不多介绍. 后来的几位是共9位, usr, group, all各三位, 三位分别表示rwx, 也就是所谓的读写执行权限,</p>
+</li>
+<li><p>权限对目录的意义</p>
+<ol>
+<li>首先要明白的是目录主要的内容是记录文件名列表和子目录列表，而不是实际存放数据的地方。</li>
+<li>r权限：拥有此权限表示可以读取目录结构列表，也就是说可以查看目录下的文件名和子目录名，注意：仅仅指的是名字。</li>
+<li>w权限：拥有此权限表示具有更改该目录结构列表的权限，总之，目录的w权限与该目录下的文件名或子目录名的变动有关，注意：指的是名字。具体如下：<ol>
+<li>在该目录下新建新的文件或子目录。</li>
+<li>删除该目录下已经存在的文件或子目录（不论该文件或子目录的权限如何），注意：这点很重要，用户能否删除一个文件或目录，看的是该用户是否具有该文件或目录所在的目录的w权限。</li>
+<li>将该目录下已经存在的文件或子目录进行重命名。</li>
+<li>转移该目录内的文件或子目录的位置。</li>
+</ol>
+</li>
+<li>x权限：拥有目录的x权限表示用户可以进入该目录成为工作目录，能不能进入一个目录，只与该目录的x权限有关，<strong><em>如果用户对于某个目录不具有x权限，则无法切换到该目录下，也就无法执行该目录下的任何命令，即使具有该目录的r权限</em></strong>。且如果用户对于某目录不具有x权限，则该用户不能查询该目录下的文件的内容，注意：<strong>指的是内容，如果有r 权限是可以查看该目录下的文件名列表或子目录列表的。所以要开放目录给任何人浏览时，应该至少要给与r及x权限</strong>。</li>
+<li>我们来做个简单的测试来看看是不是这样, 加深一下印象, 先是正常的访问:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-df606b137ef1d2a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br><img src="https://upload-images.jianshu.io/upload_images/5550522-3c7d93252f87b9e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>然后我们修改一下test目录的权限:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-bda80f6fa4319ed3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br><img src="https://upload-images.jianshu.io/upload_images/5550522-5585f89bb5a6728f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br><img src="https://upload-images.jianshu.io/upload_images/5550522-4a540b433ae76cdd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>然后我们再查看test目录下的东西,可以发现<br><img src="https://upload-images.jianshu.io/upload_images/5550522-1cac6dd46707f50c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>这个比较有趣的是我们可以看到test目录下有什么, 但是不知道这个文件的任何别的信息, 更进一步, 我们试试查看这个文件的信息,<br><img src="https://upload-images.jianshu.io/upload_images/5550522-7d41209f7d96ccd3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br><img src="https://upload-images.jianshu.io/upload_images/5550522-5c87eb8d859b35cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>可以看到除了文件名, 任何信息我们都无法获取到.<br>另外一种情况是如果有x权限没有r权限会怎么样呢, 这个情况其实很简单, 连读的权限都没有的话,我们可以是无法知道这个文件目录下有什么了, 但是注意的是我们可以进入这个目录, 如果有w权限的话, 我们也可以随意创建文件,甚至可以删除所有文件(坏笑).<br>这里简单总结一下, 对于目录来说, r权限指的是对目录的读权限, 注意这里的读权限是限于文件名的, 目录下文件的内容和其他相关信息都是不属于读权限管理的,写权限还是和我们之前写的那样, 如果想对目录做出改变, 比如创建新的文件目录, 删除文件或者目录, 都是受w权限控制的, 如果希望进入该目录下执行命令的话或者获得该目录下文件相关信息的话, 这就是x权限控制的了.这里其实w权限比较明了, r和x权限倒是比较容易弄混, 值得注意.</li>
+</ol>
+</li>
+<li><p>权限对文件的意义<br> 这个比较简单明了, 因为文件是存放数据的地方, 所以权限也都是和文件相关的:</p>
+<ol>
+<li>r权限：用于此权限表示可以读取此文件的实际内容。</li>
+<li>w权限：拥有此权限表示可以编辑、添加或者是修改该文件的内容。但是不包含删除该文件，因为由上面权限对于目录的意义得知删除文件或目录的条件是什么。</li>
+<li>x权限：表示该文件具有可以被系统执行的权限。文件是否能被执行就是由该权限来决定的，跟文件名没有绝对的关系。</li>
+</ol>
+</li>
+<li><p>access函数介绍<br>这个函数很简单, 因为我们对一个目录或者文件的访问权限也就是由我们上面看到的访问位实现的, 所以也就是将用函数实现命令行的功能而已.<br>这里我也是参考一个博客, 写的很清晰, 所以下面直接就贴上来, <a href="https://blog.csdn.net/tigerjibo/article/details/11712039" title="Linux c函数access函数介绍" target="_blank" rel="noopener">Linux c函数access函数介绍</a></p>
+</li>
+<li><p>总结<br>到这里就差不多了, 文章简单介绍了Linux下文件权限相关的知识, 顺便熟悉了一些Linux下的指令.</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/04/apue习题同步信号问题思考/" rel="next" title="apue习题同步信号问题思考">
+                <i class="fa fa-chevron-left"></i> apue习题同步信号问题思考
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/29/libkafka封装生产者同步接口/" rel="prev" title="libkafka封装生产者同步接口">
+                libkafka封装生产者同步接口 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实习遇到需要检测目录的可用性-这里记录一下Linux系统下r-w-x权限对目录和文件的意义-以前看unix环境高级编程的时候好像看过-不过印象不深-这里记录一下"><span class="nav-number">1.</span> <span class="nav-text">实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下.</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+

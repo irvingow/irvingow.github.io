@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下多线程死锁调试">
+<meta property="og:url" content="http://yoursite.com/2019/04/22/linux下多线程死锁调试/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-faf75e62768227fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux下多线程死锁调试">
+<meta name="twitter:description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-faf75e62768227fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/22/linux下多线程死锁调试/">
+
+
+
+
+
+  <title>linux下多线程死锁调试 | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/22/linux下多线程死锁调试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux下多线程死锁调试</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-22T14:44:14+08:00">
+                2019-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux-c/" itemprop="url" rel="index">
+                    <span itemprop="name">linux, c++</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1</p>
+<h4 id="获得死锁程序崩溃后的core文件"><a href="#获得死锁程序崩溃后的core文件" class="headerlink" title="获得死锁程序崩溃后的core文件"></a>获得死锁程序崩溃后的core文件</h4><ol>
+<li>这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难得的死锁出现机会就错失了.</li>
+<li>先介绍下core文件, core文件就是core dump生成的文件,core是内存的意思,dump是丢出来的意思,在我们开发unix程序的时候,相信大家肯定都遇到过Segmentation fault (core dumped)这种情况, 这个时候一般就会生成core文件,当一个进程运行过程中异常退出,操作系统会把当前进程的内存状态储存在一个core文件内,也就是core dumped产生的文件,这个就是我们在调试的时候需要用到的东西. 不过有些同学可能奇怪, 死锁的程序不是不会退出吗, 那么怎么产生core dump文件呢, 这个问题我们后来来介绍</li>
+<li>首先说下产生core文件的必须步骤</li>
+</ol>
+<blockquote>
+<p>ulimit -c</p>
+</blockquote>
+<p>如果上面的输出是0,那么说明系统目前是无法生成core文件的,因为限制了core文件的大小是0,所以自然是无法生成core文件的, 所以我们需要改变这个限制, 命令如下:</p>
+<blockquote>
+<p>ulimit -c unlimited</p>
+</blockquote>
+<p>这个命令设置core文件大小不受限制,因此core文件就可以正常产生.</p>
+<ol start="4">
+<li>杀死死锁的进程</li>
+</ol>
+<blockquote>
+<p>kill -11 pid</p>
+</blockquote>
+<p>值得注意的是我们使用的是-11选项, 前面我们提到过死锁的程序实际上是不会退出的, 因此我们就需要手动来杀死程序, 但是不能让程序直接退出, 必须要”留下点东西”下来, 也就是我们想要的core文件.<br>实际上我们使用</p>
+<blockquote>
+<p>kill -l</p>
+</blockquote>
+<p>可以看到11对应的是SIGSEGV的信号,也就是我们一般在看到Segmentation fault (core dumped)之前进程收到的信号,也就说实际上进程收到的信号决定了进程产生core dumped文件.我们使用之前说的 <em>-11</em> 选项, 进程就会退出并且产生core dumped文件,这个时候我们就能获得我们”梦寐以求”(笑)的core文件了.</p>
+<h4 id="使用gdb来调试core文件"><a href="#使用gdb来调试core文件" class="headerlink" title="使用gdb来调试core文件"></a>使用gdb来调试core文件</h4><ol>
+<li><p>这里我手动给出一个死锁的例子,代码如下</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;mutex&gt;</span><br><span class="line">#include &lt;thread&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">mutex m1, m2;</span><br><span class="line"></span><br><span class="line">void thread1() &#123;</span><br><span class="line">  lock_guard&lt; mutex &gt; guard( m1 );</span><br><span class="line">  cout &lt;&lt; &quot;thread1 lock mutex1&quot; &lt;&lt; endl;</span><br><span class="line">  std::cout &lt;&lt; &quot;then try to lock mutex2&quot; &lt;&lt; std::endl;</span><br><span class="line">  lock_guard&lt; mutex &gt; guard2( m2 );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void thread2() &#123;</span><br><span class="line">  lock_guard&lt; mutex &gt; guard( m2 );</span><br><span class="line">  std::cout &lt;&lt; &quot;thread2 locked mutex2&quot; &lt;&lt; std::endl;</span><br><span class="line">  std::cout &lt;&lt; &quot;then sleep for 1 seconds and try to lock mutex1&quot; &lt;&lt; std::endl;</span><br><span class="line">  sleep( 1 );</span><br><span class="line">  lock_guard&lt; mutex &gt; guard2( m1 );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main( int argc, char const* argv[] ) &#123;</span><br><span class="line">  thread t1( thread1 );</span><br><span class="line">  thread t2( thread2 );</span><br><span class="line"></span><br><span class="line">  t1.join();</span><br><span class="line">  t2.join();</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后编译运行, 这个比较简单,给出命令</p>
+<blockquote>
+<p>g++ -std=c++11 test_dead_lock.cpp -o test_dead_lock -g -pthread</p>
+</blockquote>
+<p>我们会获得可执行文件, 然后我们运行可执行文件,就会发现程序果然死锁了,这个时候我们不管做什么, 程序都已经失去效应, 这个时候我们需要做的就是按照步骤1的杀掉死锁进程了, 先找到进程先</p>
+<blockquote>
+<p>ps -ef | grep test_dead_lock | grep -v grep | awk ‘{print $2}’</p>
+</blockquote>
+<p>获得死锁进程的pid, 这个时候我们向这个进程发送SIGSECV信号, 也就是</p>
+<blockquote>
+<p>kill -11 pid</p>
+</blockquote>
+<p>进程退出, 我们可以看到熟悉的Segmentation fault (core dumped), 然后core文件也会随之产生,我这里产生的core文件名称就是core, 然后我们开始操作(笑), gdb调试开始</p>
+<blockquote>
+<p>gdb test_dead_lock core<br>thread apply all bt</p>
+</blockquote>
+<p>下面我们来看看结果:<img src="https://upload-images.jianshu.io/upload_images/5550522-faf75e62768227fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png">结果很明显, 有三个线程, 一个是主线程也就是thread1, 两个是我们开的子线程,分别为thread2和thread3, 可以看到主线程是卡在等待子线程中, 也就是pthread_join.其他两个线程基本算是相似了, 都是在mutex::lock那个地方卡住了,看到这里我们一般基本就能确定两个线程是死锁了,因为我们这里比较简单的场景, 如果真的是在生产环境下的话, 一般可能需要多跑几次才能确定哪些线程是真的死锁了,哪些线程只是正好在等待锁.</p>
+</li>
+<li><p>上面比较有趣的地方有两个:</p>
+<ol>
+<li><p>第一个是gdb调试指令,我们这次并没有用bt和info stack, 原因很简单, 那两个命令都只能查看目前正在运行的某个线程的栈信息, 这个对于我们来说是远远不够的, 而thread apply all命令, gdb会让对线程都执行这个命令, 就比如bt, 就是查看所有线程的具体栈信息.</p>
+</li>
+<li><p>第二个是我们使用thread apply all bt命令之后, 两个子线程的调用过程, 可以看到创建线程的系统是clone, 也就是说在Linux系统下, 操作系统用的是和产生新进程的系统调用来创建新的线程的, 按照操作系统的书籍来说的, Linux系统下创建新的线程用的就是clone, 但传递给clone的参数是和创建新的进程不同的, 比如创建新的线程的时候肯定是要共享地址空间的, 另外还要共享打开文件描述符等等,这里就不再细说, 具体可以看看操作系统相关的书籍.</p>
+</li>
+</ol>
+</li>
+</ol>
+<p>写到这里就差不多了, 多线程编程一直是在c++非常难的部分,这些需要多coding和多reading才能有所提高, 希望和大家一起提高!</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/11/Linux下寻找静态库依赖的一个小技巧/" rel="next" title="Linux下寻找静态库依赖的一个小技巧">
+                <i class="fa fa-chevron-left"></i> Linux下寻找静态库依赖的一个小技巧
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/23/test-new-mac-client/" rel="prev" title="test new mac client">
+                test new mac client <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#获得死锁程序崩溃后的core文件"><span class="nav-number">1.</span> <span class="nav-text">获得死锁程序崩溃后的core文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用gdb来调试core文件"><span class="nav-number">2.</span> <span class="nav-text">使用gdb来调试core文件</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+

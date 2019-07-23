@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cp一个含有空洞的文件">
+<meta property="og:url" content="http://yoursite.com/2019/03/04/cp一个含有空洞的文件/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cp一个含有空洞的文件">
+<meta name="twitter:description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/04/cp一个含有空洞的文件/">
+
+
+
+
+
+  <title>cp一个含有空洞的文件 | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/04/cp一个含有空洞的文件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">cp一个含有空洞的文件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-04T15:35:41+08:00">
+                2019-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/computers/" itemprop="url" rel="index">
+                    <span itemprop="name">computers</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="apue-3rd-exercises4-6"><a href="#apue-3rd-exercises4-6" class="headerlink" title="apue 3rd exercises4.6"></a>apue 3rd exercises4.6</h4><p>最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段字节中有不少字节为0的情况,所以这种方式的cp未免太过简单.之后又看到一个觉得靠谱的思路,也就是我下面要介绍的思路.</p>
+<ul>
+<li><p>先说下思路,主要利用的是新版本下linux支持的lseek()函数的特殊用法,所以不好意思啦,mac os估计是无法使用我的代码了.</p>
+<blockquote>
+<p>off_t lseek(int fd, off_t offset, int whence);<br>  Since version 3.1, Linux supports the following additional values for whence:<br>  <strong>SEEK_DATA</strong>  :Adjust the file offset to the next location in the file greater than or equal to offset containing data.  If offset points to data, then the file offset is set to offset.<br>  <strong>SEEK-HOLE</strong> :Adjust the file offset to the next hole in the file greater than or equal to offset.  If offset points into the middle of a hole, then the file offset is set to offset.  If there is no hole past offset, then the file offset is adjusted to the end of the file (i.e., there is an implicit hole at the end of any file).</p>
+</blockquote>
+<p>以上是官方手册给出的对lseek()函数的解释,很显然,SEEK_DATA,SEEK_HOLE就是我们在代码中需要用到的部分了</p>
+</li>
+<li><p>第二点就是关键的几个地方,第一个是对初始情况的处理,因为开始我们并不知道文件的开始部分到底是空洞还是数据,所以我们需要先进行处理</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">currentPosition = lseek(sourcefd, currentPosition, SEEK_DATA);</span><br><span class="line">lseek(targetfd, currentPosition, SEEK_SET);</span><br><span class="line">holePosition = lseek(sourcefd, currentPosition, SEEK_HOLE);</span><br><span class="line"> lseek(sourcefd, currentPosition, SEEK_SET);</span><br></pre></td></tr></table></figure>
+
+<p>  这个算是我们这个cp函数的核心了,我来简单解释下这几行代码的行为</p>
+<ul>
+<li>第一行是修改文件偏移量使之指向下一块数据块,新的文件偏移量要大于等于第二个参数代表的偏移量.如果我们在初始情况下调用,currentPosition为0,如果文件开始处是空洞,currentPosition就会指向下一个数据块的起始处.如果文件开始处就是数据块,那么currentPosition仍然会是0.如果在完成字符拷贝之后调用该函数,由于已经完成字符拷贝,所以未调用函数前currentPosition指向是空洞的开始处,调用成功之后currentPosition就会指向我们需要拷贝的下一个数据块开始处咯.</li>
+<li>第二行主要是设置目标文件的偏移量,很简单,但是不能忘记设置,否则空洞就全部消失咯.</li>
+<li>第三行和第一行的思路是差不多了,理解了第一行的话这一行也不难理解,不过值得一提的是这里面lseek()的第二个参数用的是currentPosition,这样我们才能成功的得到下一个空洞的位置,实际上这个逻辑也是环环相扣的.</li>
+<li>第四行和第二行的思路是差不多的,我们设置源文件的文件偏移量为currentPosition,即为我们想要读的数据块的开始处.</li>
+</ul>
+</li>
+<li><p>第三个就是我们编译的时候需要注意的问题,gcc默认编译的情况下我们会得到SEEK_HOLE和SEEK_DATA未定义的错误,这个时候我们需要带上-D_GNU_SOURCE选项,这样编译的时候就不会报错了</p>
+</li>
+<li><p>最后贴上代码的链接,我放在我的github上了,另外还有配套的test.c文件来产生有空洞的test.txt文件.<a href="https://github.com/irvingow/codeofapue" target="_blank" rel="noopener">codeofapue</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/04/常见str-型函数用法总结/" rel="next" title="常见str*型函数用法总结">
+                <i class="fa fa-chevron-left"></i> 常见str*型函数用法总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/04/apue习题同步信号问题思考/" rel="prev" title="apue习题同步信号问题思考">
+                apue习题同步信号问题思考 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#apue-3rd-exercises4-6"><span class="nav-number">1.</span> <span class="nav-text">apue 3rd exercises4.6</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+

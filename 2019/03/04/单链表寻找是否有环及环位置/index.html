@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x),">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单链表寻找是否有环及环位置">
+<meta property="og:url" content="http://yoursite.com/2019/03/04/单链表寻找是否有环及环位置/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x),">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="单链表寻找是否有环及环位置">
+<meta name="twitter:description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x),">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/04/单链表寻找是否有环及环位置/">
+
+
+
+
+
+  <title>单链表寻找是否有环及环位置 | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/04/单链表寻找是否有环及环位置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">单链表寻找是否有环及环位置</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-04T14:59:52+08:00">
+                2019-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ol>
+<li><p>确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct ListNode</span><br><span class="line">&#123;</span><br><span class="line">    int val;</span><br><span class="line">    ListNode *next;</span><br><span class="line">    ListNode(int x): val(x), next(NULL) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">bool hasCycle(ListNode *head)</span><br><span class="line">&#123;</span><br><span class="line">	if(head == NULL)</span><br><span class="line">		return false;</span><br><span class="line">	ListNode *slowNode,*fastNode;</span><br><span class="line">	slowNode = fastNode = head;</span><br><span class="line">	while(fastNode-&gt;next &amp;&amp; fastNode-&gt;next-&gt;next)</span><br><span class="line">	&#123;</span><br><span class="line">		slowNode = slowNode-&gt;next;</span><br><span class="line">		fastNode = fastNode-&gt;next-&gt;next;</span><br><span class="line">		if(slowNode == fastNode)</span><br><span class="line">			return true;</span><br><span class="line">	&#125;</span><br><span class="line">	return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要的思路是用一个快指针和慢指针,快指针一次走两步,慢指针一次只走一步,如果链表中有环的话快慢指针肯定会相遇,即可判断链表中是否有环.接下来简单解释下如果寻找环起始位置的原理,我们可以简单思考下快指针和慢指针相遇位置的特殊性,在什么情况下快慢指针会相遇呢?<br>我的答案是当快慢指针都进入环中,就形成了快指针追逐慢指针的过程.而当慢指针进入环中,快指针比慢指针多走了多少呢?<br>在回答这个问题之前,我们先做一些假设    我们认为从头节点到环开始节点的距离为n,环的大小为m.<br>显然当慢指针到达环开始节点时,快指针在慢指针前面n % m的位置,假设n % m为k吧,也等价于,快指针在慢指针后面m - k位置处,所以需要m - k的单位时间才能追上慢指针,这个时候,慢指针到哪的呢?<br>显然,是距离环开始节点k的节点,这个时候我们又注意到,头节点到环开始节点的距离n = ((int)(n / m))*m + k.所以问题的关键就出来了,如果有两个指针,一个从快慢指针相遇的位置出发,另一个指针从头节点出发,他们将会在环开始节点的位置相遇!!至此,我们的问题就已经完美的解决了,下面贴一些代码.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> ListNode *detectCycle(ListNode *head)</span><br><span class="line">&#123;</span><br><span class="line">    if(head == NULL || head-&gt;next == NULL)</span><br><span class="line">        return NULL;</span><br><span class="line">    ListNode *slowNode, *fastNode;</span><br><span class="line">    slowNode = fastNode = head;</span><br><span class="line">    while(fastNode-&gt;next &amp;&amp; fastNode-&gt;next-&gt;next)</span><br><span class="line">    &#123;</span><br><span class="line">        slowNode = slowNode-&gt;next;</span><br><span class="line">        fastNode = fastNode-&gt;next-&gt;next;</span><br><span class="line">        if(slowNode == fastNode)</span><br><span class="line">        &#123;</span><br><span class="line">            slowNode = head;</span><br><span class="line">            while(slowNode != fastNode)</span><br><span class="line">            &#123;</span><br><span class="line">                slowNode = slowNode-&gt;next;</span><br><span class="line">                fastNode = fastNode-&gt;next;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            return fastNode;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    return NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h4 id="2-探测一个单链表是否为回文序列"><a href="#2-探测一个单链表是否为回文序列" class="headerlink" title="2. 探测一个单链表是否为回文序列"></a>2. 探测一个单链表是否为回文序列</h4><p>这个和上一道题有一点点相似之处吧,解决这个问题的思路不算直接,我们需要先找到单链表的中点(不一定是严格意义上的中点),然后翻转单链表的后半部分,再比较链表的前半部分和后半部分,如果完全相同就是回文链表,否则不是.<br>    * 先获得一个单链表的中点位置,这个问题是不是感到很熟悉,答案正是我们在上一题用到的快慢指针,对于一个单链表,当快指针到达链表的尾部时,慢指针恰好到达链表的中点.不过需要注意的是,当一个单链表具有偶数个节点时,快指针实际上会在尾节点的前一个节点停下,这个时候我们就需要将块指针和慢指针同时向后移一个节点,大家可以画图看一下,并不难理解.<br>    * 第二点就是我们需要翻转一个单链表,我个人的思路如下:需要一个头指针first指向已经翻转过的链表的头节点,需要一个尾指针last指向已经翻转过的链表的尾节点(初始时未翻转,头指针和尾指针都指向待翻转链表的头结点),另外需要一个temp指针用来暂存一下额外的信息.<br>    * 主要思路为<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">temp = last-&gt;next;//temp储存需要翻转的节点的指针</span><br><span class="line">last-&gt;next = last-&gt;next-&gt;next;</span><br><span class="line">temp-&gt;next = first;//把需要翻转的节点放在开始位置</span><br><span class="line">first = temp;//使头指针始终指向第一个节点</span><br></pre></td></tr></table></figure></p>
+<ol start="3">
+<li>上面只是思路,没考虑是否已经到链表尾部的情况,下面贴出代码<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">struct ListNode</span><br><span class="line">&#123;</span><br><span class="line">	int val;</span><br><span class="line">	ListNode *next;</span><br><span class="line">	ListNode(int x):val(x),next(NULL)&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool isPalindrome(ListNode *head)</span><br><span class="line">&#123;</span><br><span class="line">	if(head == NULL || head-&gt;next == NULL)</span><br><span class="line">		return true;</span><br><span class="line">	ListNode *slow,*fast;</span><br><span class="line">	fast = slow = head;</span><br><span class="line">	while(fast-&gt;next &amp;&amp; fast-&gt;next-&gt;next)</span><br><span class="line">	&#123;</span><br><span class="line">		slow = slow-&gt;next;</span><br><span class="line">		fast = fast-&gt;next-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	//in case that the fast pointer doesn&apos;t reach the end of list</span><br><span class="line">	if(fast-&gt;next != NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		fast = fast-&gt;next;</span><br><span class="line">		slow = slow-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	//reverse the later half of the list.</span><br><span class="line">	ListNode *first,*last;</span><br><span class="line">	first = last = slow;</span><br><span class="line">	ListNode *temp;</span><br><span class="line">	while(last-&gt;next != NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		temp = last-&gt;next;</span><br><span class="line">		last-&gt;next = last-&gt;next-&gt;next;</span><br><span class="line">		temp-&gt;next = first;</span><br><span class="line">		first = temp;</span><br><span class="line">	&#125;</span><br><span class="line">	//reverse done, and then we compare the two list.</span><br><span class="line">	while(head != slow)</span><br><span class="line">	&#123;</span><br><span class="line">		if(first-&gt;val != head-&gt;val)</span><br><span class="line">			return false;</span><br><span class="line">		head = head-&gt;next;</span><br><span class="line">		first = first-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>实际上这个问题有很多衍生的版本,但是基本思路都是这个,我就不再一一细说了.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/04/git推送项目到github入门/" rel="next" title="git推送项目到github入门">
+                <i class="fa fa-chevron-left"></i> git推送项目到github入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/04/常见str-型函数用法总结/" rel="prev" title="常见str*型函数用法总结">
+                常见str*型函数用法总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-探测一个单链表是否为回文序列"><span class="nav-number">1.</span> <span class="nav-text">2. 探测一个单链表是否为回文序列</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
