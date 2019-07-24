@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="最近看到了csapp的网络编程,书上给了一个简单编写一个web服务器的代码,在解析客户端请求的一个函数中中用到了很多str*型的函数,看的我很迷糊,特此总结一下,加深记忆也方便以后来看.  strcmp函数 Description: this function compares the string pointed to, by str1 to the string pointed to by s">
+<meta name="description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="常见str*型函数用法总结">
-<meta property="og:url" content="http://yoursite.com/2019/03/04/常见str-型函数用法总结/index.html">
+<meta property="og:title" content="再探线程安全的单例模式实现">
+<meta property="og:url" content="http://yoursite.com/2019/07/24/再探线程安全的单例模式实现/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="最近看到了csapp的网络编程,书上给了一个简单编写一个web服务器的代码,在解析客户端请求的一个函数中中用到了很多str*型的函数,看的我很迷糊,特此总结一下,加深记忆也方便以后来看.  strcmp函数 Description: this function compares the string pointed to, by str1 to the string pointed to by s">
+<meta property="og:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta property="og:updated_time" content="2019-07-24T15:50:20.593Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="常见str*型函数用法总结">
-<meta name="twitter:description" content="最近看到了csapp的网络编程,书上给了一个简单编写一个web服务器的代码,在解析客户端请求的一个函数中中用到了很多str*型的函数,看的我很迷糊,特此总结一下,加深记忆也方便以后来看.  strcmp函数 Description: this function compares the string pointed to, by str1 to the string pointed to by s">
+<meta name="twitter:title" content="再探线程安全的单例模式实现">
+<meta name="twitter:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/03/04/常见str-型函数用法总结/">
+  <link rel="canonical" href="http://yoursite.com/2019/07/24/再探线程安全的单例模式实现/">
 
 
 
 
 
-  <title>常见str*型函数用法总结 | 眼前的code</title>
+  <title>再探线程安全的单例模式实现 | 眼前的code</title>
   
 
 
@@ -254,7 +254,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/04/常见str-型函数用法总结/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/24/再探线程安全的单例模式实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="irving lwj">
@@ -271,7 +271,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">常见str*型函数用法总结</h1>
+          <h1 class="post-title" itemprop="name headline">再探线程安全的单例模式实现</h1>
         
 
         <div class="post-meta">
@@ -283,8 +283,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-04T15:33:15+08:00">
-                2019-03-04
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-24T23:31:14+08:00">
+                2019-07-24
               </time>
             
 
@@ -343,77 +343,14 @@
       
 
       
-        <p>最近看到了csapp的网络编程,书上给了一个简单编写一个web服务器的代码,在解析客户端请求的一个函数中中用到了很多str*型的函数,看的我很迷糊,特此总结一下,加深记忆也方便以后来看.</p>
-<ul>
-<li>strcmp函数<ul>
-<li>Description: this function compares the string pointed to, by str1 to the string pointed to by str2.</li>
-<li>Declaration: int strcmp(const char *str1, const char *str2)</li>
-<li>Parameters:<ul>
-<li>str1 – This is the first string to be compared.</li>
-<li>str2 – This is the second string to be compared.</li>
-</ul>
-</li>
-<li>Return value: This function return values that are as follows:<ul>
-<li>if Return value &lt; 0 then it indicates str1 is less than str2.</li>
-<li>if Return value &gt; 0 then it indicates str2 is less than str1.</li>
-<li>if Return value = 0 then it indicates str1 is equal to str2.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>strstr函数<ul>
-<li>Description: this function finds the first occurrence of the substring needle in the string haystack. The teminating ‘\0’ character is not compared.</li>
-<li>Declaration: char *strstr(const char *haystack, const char *needle)</li>
-<li>Parameters:<ul>
-<li>haystack – This is the main C string to be scanned.</li>
-<li>needle – This is the small string to be searched with-in haystack string.</li>
-</ul>
-</li>
-<li>Return value: This function returns a pointer to the first occurrence in haystack of any of the entire sequence of characters specified in needle, or a null pointer if the sequence is not present in haystack.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>strcpy函数<ul>
-<li>Description: this function copies the string pointed to, by src to dest.</li>
-<li>Declaration: char *strcpy(char *dest, const char *src)</li>
-<li>Parameters:<ul>
-<li>dest – This is the pointer to the destination array where the content is to be copied.</li>
-<li>src – This is the string to be copied.</li>
-</ul>
-</li>
-<li>Return value: This returns a pointer to the destination string dest.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>strcat函数<ul>
-<li>Description: this function appends the string pointed to by src to the end of the string pointed to by dest.</li>
-<li>Declaration: char *strcat(char *dest, const char *src)</li>
-<li>Parameters:<ul>
-<li>dest – This is pointer to the destination array, which should contain a C string, and should be large enough to contain the concatenated resulting string.</li>
-<li>src – This is the string to be appended. This should not overlap the destination.</li>
-</ul>
-</li>
-<li>Return value: This function returns a pointer to the resulting string dest.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>strchr函数<ul>
-<li>Description: this function searches for the first occurrence of the character c (an unsigned char) in the string pointed to by the argument str.</li>
-<li>Declaration: char *strchr(const char *str, int c)</li>
-<li>Parameters:<ul>
-<li>str – This is the C string to be scanned.</li>
-<li>c – This is the character to be searched in str.</li>
-</ul>
-</li>
-<li>Return value: This returns a pointer to the first occurrence of the character c in the string str, or NULL if the character is not found.</li>
-</ul>
-</li>
-</ul>
+        <p>最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。</p>
+<h4 id="单例模式的实现"><a href="#单例模式的实现" class="headerlink" title="单例模式的实现"></a>单例模式的实现</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> :</span> boost::noncopyable</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">static</span> T&amp; <span class="title">instance</span><span class="params">()</span></span>&#123;</span><br><span class="line">    pthread_once(&amp;ponce_, &amp;Singleton::init);</span><br><span class="line">    <span class="keyword">return</span> *value_;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">  Singleton();</span><br><span class="line">  ~Singleton();</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">    value_ = <span class="keyword">new</span> T();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">pthread_once_t</span> ponce_;</span><br><span class="line">  <span class="keyword">static</span> T* value_;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/// 必须在头文件中声明static变量</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">pthread_once_t</span> Singleton&lt;T&gt;::ponce_ = PTHREAD_ONCE_INIT;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">T* Singleton&lt;T&gt;::value_ = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p>这个Singleton倒是没有用到之前的各种加锁技巧等等，用pthread_once_t来保证lazy-initialization的线程安全。线程安全性由pthreads库来保证。使用方式也比较简单：</p>
+<blockquote>
+<p>Foo&amp; foo = Singleton&lt;Foo&gt;::instance();</p>
+</blockquote>
+<p>这个Singleton没有考虑对象的销毁，作者给出的理由是在长时间稳定运行的服务器上没有必要销毁这个对象，在短时间运行的场景下，程序退出自然对象就被释放来。个人感觉是因为析构函数确实很难设计，按照目前的写法，析构函数是私有的，自然无法被访问，对象也就无法被析构，但是如果把析构函数变成公有的，那么就会出现一个问题，如果用户不小心调用了析构函数，那么这个单例模式就没有用了，因为唯一的对象已经被销毁，同时也绝对无法创建新的对应，这个时候就比较尴尬了，这可能是作者没有对析构给出好的解决办法的一个原因。另外，这个Singleton只能调用默认构造函数，如果需要定制构造方式的话，作者认为可以用模版特化，我个人觉得可以直接不实用模版就好了，倒不算什么问题。</p>
 
       
     </div>
@@ -438,8 +375,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/03/04/单链表寻找是否有环及环位置/" rel="next" title="单链表寻找是否有环及环位置">
-                <i class="fa fa-chevron-left"></i> 单链表寻找是否有环及环位置
+              <a href="/2019/07/24/单链表的快速排序/" rel="next" title="单链表的快速排序">
+                <i class="fa fa-chevron-left"></i> 单链表的快速排序
               </a>
             
           </div>
@@ -447,10 +384,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/03/04/cp一个含有空洞的文件/" rel="prev" title="cp一个含有空洞的文件">
-                cp一个含有空洞的文件 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -502,8 +435,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -563,6 +505,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#单例模式的实现"><span class="nav-number">1.</span> <span class="nav-text">单例模式的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺点"><span class="nav-number">2.</span> <span class="nav-text">缺点</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
