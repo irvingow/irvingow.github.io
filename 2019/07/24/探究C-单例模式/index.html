@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近又拾起了以前找实习看的东西, 看到了一篇博客写C++单例模式觉得很不错, 但是写的有点点杂乱, 这里我自己再总结一番. 参考的博客链接在这:探究C++单例模式 饿汉模式饿汉模式是指单例的实例在程序运行的一开始就立即被初始化, 简单代码如下所示: 1234567891011121314class Singleton&amp;#123;public:    static Singleton&amp;amp; ge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探究C++单例模式">
+<meta property="og:url" content="http://yoursite.com/2019/07/24/探究C-单例模式/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="最近又拾起了以前找实习看的东西, 看到了一篇博客写C++单例模式觉得很不错, 但是写的有点点杂乱, 这里我自己再总结一番. 参考的博客链接在这:探究C++单例模式 饿汉模式饿汉模式是指单例的实例在程序运行的一开始就立即被初始化, 简单代码如下所示: 1234567891011121314class Singleton&amp;#123;public:    static Singleton&amp;amp; ge">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-c7e0f6766b5bc4b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-fa7a0060fdfe8c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-07-24T11:21:29.521Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探究C++单例模式">
+<meta name="twitter:description" content="最近又拾起了以前找实习看的东西, 看到了一篇博客写C++单例模式觉得很不错, 但是写的有点点杂乱, 这里我自己再总结一番. 参考的博客链接在这:探究C++单例模式 饿汉模式饿汉模式是指单例的实例在程序运行的一开始就立即被初始化, 简单代码如下所示: 1234567891011121314class Singleton&amp;#123;public:    static Singleton&amp;amp; ge">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-c7e0f6766b5bc4b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/24/探究C-单例模式/">
+
+
+
+
+
+  <title>探究C++单例模式 | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/24/探究C-单例模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">探究C++单例模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-24T19:17:21+08:00">
+                2019-07-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/c/" itemprop="url" rel="index">
+                    <span itemprop="name">c++</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近又拾起了以前找实习看的东西, 看到了一篇博客写C++单例模式觉得很不错, 但是写的有点点杂乱, 这里我自己再总结一番. 参考的博客链接在这:<a href="https://blog.csdn.net/crayondeng/article/details/24853471" title="探究C++单例模式" target="_blank" rel="noopener">探究C++单例模式</a></p>
+<h4 id="饿汉模式"><a href="#饿汉模式" class="headerlink" title="饿汉模式"></a>饿汉模式</h4><p>饿汉模式是指单例的实例在程序运行的一开始就立即被初始化, 简单代码如下所示:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton&amp; <span class="title">getInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m_data;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> Singleton m_data; <span class="comment">//static data member 在类中声明，在类外定义</span></span><br><span class="line">    Singleton()&#123;&#125;</span><br><span class="line">	Singleton(Singleton <span class="keyword">const</span>&amp;);            <span class="comment">// copy ctor hidden</span></span><br><span class="line">    Singleton&amp; <span class="keyword">operator</span>=(Singleton <span class="keyword">const</span>&amp;); <span class="comment">// assign op. hidden</span></span><br><span class="line">    ~Singleton()&#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个模式有个很明显的问题, 静态成员变量的初始化顺序是无法保证的, 假如有两个单例模式的类ASingleton和BSingleton, 某一天我们打算在BSingleton的构造函数中使用ASingleton的实例, 这个时候, 潜在的问题就出现了, 如果ASingleton的实例在BSingleton使用它之前并没有初始化, 那么ASingleton::getinstance()返回的就是一个未初始化的内存区域, 如果我们要使用这个单例的话, 程序就会不出意外的直接崩溃. 下面给出一个例子来:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ASingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> ASingleton* <span class="title">getInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &amp;m_data;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">do_something</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"ASingleton do_something!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="keyword">static</span> ASingleton m_data; <span class="comment">//static data member 在类中声明，在类外定义</span></span><br><span class="line">    ASingleton();</span><br><span class="line">	ASingleton(ASingleton <span class="keyword">const</span>&amp;);            <span class="comment">// copy ctor hidden</span></span><br><span class="line">    ASingleton&amp; <span class="keyword">operator</span>=(ASingleton <span class="keyword">const</span>&amp;); <span class="comment">// assign op. hidden</span></span><br><span class="line">    ~ASingleton() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> BSingleton* <span class="title">getInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &amp;m_data;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">do_something</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"BSingleton do_something!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="keyword">static</span> BSingleton m_data; <span class="comment">//static data member 在类中声明，在类外定义</span></span><br><span class="line">    BSingleton();</span><br><span class="line">	BSingleton(BSingleton <span class="keyword">const</span>&amp;);            <span class="comment">// copy ctor hidden</span></span><br><span class="line">    BSingleton&amp; <span class="keyword">operator</span>=(BSingleton <span class="keyword">const</span>&amp;); <span class="comment">// assign op. hidden</span></span><br><span class="line">    ~BSingleton() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line">ASingleton ASingleton::m_data;</span><br><span class="line">BSingleton BSingleton::m_data;</span><br><span class="line">ASingleton::ASingleton()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"ASingleton constructor!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    BSingleton::getInstance()-&gt;do_something();</span><br><span class="line">&#125;</span><br><span class="line">BSingleton::BSingleton()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"BSingleton constructor!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们运行一下的话, 测试的结果大概是这样:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-c7e0f6766b5bc4b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>可以看到这个顺序实际上是有问题的, 因为BSingleton的初始化是在我们使用BSingleton的实例之后的, 但是之所以能打印出来第二行的文字是因为这个函数实际上没有使用类的成员, 也就是说实际上这个函数是不依赖BSingleton的对象的, 在这里我给个简单的例子, 假设有下面一段代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line">class A</span><br><span class="line">&#123;</span><br><span class="line">	public:</span><br><span class="line">		void print()&#123;cout&lt;&lt;&quot;hello world&quot;&lt;&lt;endl;&#125;</span><br><span class="line">&#125;;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	A* a = nullptr;</span><br><span class="line">	a-&gt;print();</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有兴趣的同学可以跑一下这个代码, 看起来是无法运行的, 但是实际上这个代码是可以正确打印出hello world的. 这个和上面的问题本质上一样的.<br>到这里, 我们可以很明显的看出来, 实际上饿汗模式的写法是有点问题的, 不过如果我们能确保不在其他单例类的构造函数中使用其他单例, 问题也就不存在了, 下面来介绍一种另外常见的单例模式写法.</p>
+<h4 id="懒汉模式"><a href="#懒汉模式" class="headerlink" title="懒汉模式"></a>懒汉模式</h4><p>懒汉当然比较懒, 不到万不得已是不会干活的, 这个代码的思想也是来源于此, 代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">getInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(! m_data) m_data = <span class="keyword">new</span> Singleton();</span><br><span class="line">        <span class="keyword">return</span> m_data;</span><br><span class="line">    &#125;    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> Singleton* m_data; <span class="comment">//static data member 在类中声明，在类外定义</span></span><br><span class="line">    Singleton()&#123;&#125;</span><br><span class="line">    ~Singleton()&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line">Singleton* Singleton::m_data = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个实现主要有两个问题, 第一个很明显的问题是析构函数里面什么都没做, 这个问题比较好解决, 在析构函数中加上判断就好, 第二个问题是这个代码是线程不安全的, 也就说在getInstance函数中, 如果两个线程同时进入这个方法中, 那么就会构造出两个变量, m_data也会初始化两次, 所以这样肯定是有问题的.<br>下面是改进的办法:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	CSingleton()   <span class="comment">//构造函数是私有的</span></span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	CSingleton(<span class="keyword">const</span> CSingleton &amp;);</span><br><span class="line">	CSingleton &amp; <span class="keyword">operator</span> = (<span class="keyword">const</span> CSingleton &amp;);</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">static</span> CSingleton &amp; <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">static</span> CSingleton instance;   <span class="comment">//局部静态变量</span></span><br><span class="line">		<span class="keyword">return</span> instance;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个基本是没什么问题了, 再考虑到线程安全以及异常安全的话, 有下面这个版本:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Lock</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:       </span><br><span class="line">	CCriticalSection m_cs;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	Lock(CCriticalSection  cs) : m_cs(cs)</span><br><span class="line">	&#123;</span><br><span class="line">		m_cs.Lock();</span><br><span class="line">	&#125;</span><br><span class="line">	~Lock()</span><br><span class="line">	&#123;</span><br><span class="line">		m_cs.Unlock();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	Singleton();</span><br><span class="line">	Singleton(<span class="keyword">const</span> Singleton &amp;);</span><br><span class="line">	Singleton&amp; <span class="keyword">operator</span> = (<span class="keyword">const</span> Singleton &amp;);</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">static</span> Singleton *<span class="title">Instantialize</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="keyword">static</span> Singleton *pInstance;</span><br><span class="line">	<span class="keyword">static</span> CCriticalSection cs;</span><br><span class="line">&#125;;</span><br><span class="line">Singleton* Singleton::pInstance = <span class="number">0</span>;</span><br><span class="line">Singleton* Singleton::Instantialize()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(pInstance == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;   <span class="comment">//double check</span></span><br><span class="line">		<span class="function">Lock <span class="title">lock</span><span class="params">(cs)</span></span>;           <span class="comment">//用lock实现线程安全，用资源管理类，实现异常安全</span></span><br><span class="line">		<span class="comment">//使用资源管理类，在抛出异常的时候，资源管理类对象会被析构，析构总是发生的无论是因为异常抛出还是语句块结束。</span></span><br><span class="line">		<span class="keyword">if</span>(pInstance == <span class="literal">NULL</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			pInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码稍微值得注意的是在获得Singleton的实例函数中, 有两个判断pInstance是否为nullptr的语句, 第一个是为了减少加锁行为的开销, 第二个是为了线程安全, 这里不再细说.</p>
+<h4 id="终极方案"><a href="#终极方案" class="headerlink" title="终极方案"></a>终极方案</h4><p>上面其实基本上已经把方案给出来了, 但是下面给出的这个方案更简单, 是boost库中的实现, 代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">getInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> Singleton instance;</span><br><span class="line">        <span class="keyword">return</span> &amp;instance;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Object_Creator</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        Object_Creator()</span><br><span class="line">        &#123;</span><br><span class="line">            Singleton::getInstance();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">static</span> Object_Creator _object_creator;</span><br><span class="line"></span><br><span class="line">    Singleton() &#123;&#125;</span><br><span class="line">    ~Singleton() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line">Singleton::Object_Creator Singleton::_object_creator;</span><br></pre></td></tr></table></figure>
+
+<p>这个方案综合了懒汉模式和饿汗模式的优点, 既使用了类静态成员变量, 也用到了静态局部变量, 这个方案也没有前面两个方案的缺点,  显然这个版本已经没有了线程安全的问题, 因为我们使用了静态局部变量, 对于前面ASingleton和BSingleton的例子, 我们增加下面的测试代码:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ASingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> ASingleton* <span class="title">getInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> ASingleton instance;</span><br><span class="line">        <span class="keyword">return</span> &amp;instance;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">do_something</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"ASingleton do_something!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Object_Creator</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        Object_Creator()</span><br><span class="line">        &#123;</span><br><span class="line">            ASingleton::getInstance();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">static</span> Object_Creator _object_creator;</span><br><span class="line"></span><br><span class="line">    ASingleton();</span><br><span class="line">    ~ASingleton() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BSingleton</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> BSingleton* <span class="title">getInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> BSingleton instance;</span><br><span class="line">        <span class="keyword">return</span> &amp;instance;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">do_something</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"BSingleton do_something!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Object_Creator</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        Object_Creator()</span><br><span class="line">        &#123;</span><br><span class="line">            BSingleton::getInstance();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">static</span> Object_Creator _object_creator;</span><br><span class="line"></span><br><span class="line">    BSingleton();</span><br><span class="line">    ~BSingleton() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line">ASingleton::Object_Creator ASingleton::_object_creator;</span><br><span class="line">BSingleton::Object_Creator BSingleton::_object_creator;</span><br><span class="line">ASingleton::ASingleton()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"ASingleton constructor!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    BSingleton::getInstance()-&gt;do_something();</span><br><span class="line">&#125;</span><br><span class="line">BSingleton::BSingleton()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"BSingleton constructor!"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这次的输出结果就很正常了,如下所示:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-fa7a0060fdfe8c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>因为在BSingleton::getinstance()的时候初始化了BSingleton的变量, 因此也不存在程序崩掉了的问题了.</p>
+<p> 总结: 单例模式是一个听起来挺简单, 但是实际上用起来并不简单的东西, 就上面看来, 如果我们只是第一次接触这个模式,大概率我们写出来的单例模式的代码是有问题, 所以这次总结也算是收获颇丰吧.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/23/二叉树的前序,中序,后序遍历非递归写法/" rel="next" title="二叉树的前序,中序,后序遍历非递归写法">
+                <i class="fa fa-chevron-left"></i> 二叉树的前序,中序,后序遍历非递归写法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#饿汉模式"><span class="nav-number">1.</span> <span class="nav-text">饿汉模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#懒汉模式"><span class="nav-number">2.</span> <span class="nav-text">懒汉模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#终极方案"><span class="nav-number">3.</span> <span class="nav-text">终极方案</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
