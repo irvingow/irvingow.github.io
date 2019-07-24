@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="眼前的code">
 <meta property="og:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-24T15:50:20.593Z">
+<meta property="og:updated_time" content="2019-07-24T15:52:23.277Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="再探线程安全的单例模式实现">
 <meta name="twitter:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
@@ -350,7 +350,7 @@
 <blockquote>
 <p>Foo&amp; foo = Singleton&lt;Foo&gt;::instance();</p>
 </blockquote>
-<p>这个Singleton没有考虑对象的销毁，作者给出的理由是在长时间稳定运行的服务器上没有必要销毁这个对象，在短时间运行的场景下，程序退出自然对象就被释放来。个人感觉是因为析构函数确实很难设计，按照目前的写法，析构函数是私有的，自然无法被访问，对象也就无法被析构，但是如果把析构函数变成公有的，那么就会出现一个问题，如果用户不小心调用了析构函数，那么这个单例模式就没有用了，因为唯一的对象已经被销毁，同时也绝对无法创建新的对应，这个时候就比较尴尬了，这可能是作者没有对析构给出好的解决办法的一个原因。另外，这个Singleton只能调用默认构造函数，如果需要定制构造方式的话，作者认为可以用模版特化，我个人觉得可以直接不实用模版就好了，倒不算什么问题。</p>
+<p>这个Singleton没有考虑对象的销毁，作者给出的理由是在长时间稳定运行的服务器上没有必要销毁这个对象，在短时间运行的场景下，程序退出自然对象就被释放。个人感觉是因为析构函数确实很难设计，按照目前的写法，析构函数是私有的，自然无法被访问，对象也就无法被析构，但是如果把析构函数变成公有的，那么就会出现一个问题，如果用户不小心调用了析构函数，那么这个单例模式就没有用了，因为唯一的对象已经被销毁，同时也绝对无法创建新的对象，这个时候就比较尴尬了，这可能是作者没有对析构给出好的解决办法的一个原因。另外，这个Singleton只能调用默认构造函数，如果需要定制构造方式的话，作者认为可以用模版特化，我个人觉得可以直接不实用模版就好了，倒不算什么问题。</p>
 
       
     </div>
