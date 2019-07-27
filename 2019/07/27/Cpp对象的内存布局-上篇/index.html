@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言这几天一直在看c++的基础东西,看到虚拟继承和虚函数这一块,总感觉了解的不深刻,所以在网上找了找博客,也自己动手敲了敲看看结果,感觉理解加深了很多,在这里也总结一下,加深记忆也方便以后的回忆. 我先贴一下我参考的两篇博客的地址,我的测试也是参考上面的代码的:C++对象的内存布局C++虚继承对象的内存布局 我将上面两篇博客的代码在我的电脑上都测试了一下,结果放到下面,因为电脑的进步,我对它们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cpp对象的内存布局(上篇)">
+<meta property="og:url" content="http://yoursite.com/2019/07/27/Cpp对象的内存布局-上篇/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="前言这几天一直在看c++的基础东西,看到虚拟继承和虚函数这一块,总感觉了解的不深刻,所以在网上找了找博客,也自己动手敲了敲看看结果,感觉理解加深了很多,在这里也总结一下,加深记忆也方便以后的回忆. 我先贴一下我参考的两篇博客的地址,我的测试也是参考上面的代码的:C++对象的内存布局C++虚继承对象的内存布局 我将上面两篇博客的代码在我的电脑上都测试了一下,结果放到下面,因为电脑的进步,我对它们">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-3b6e40a8843fd561.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-3d2f1a089009e48a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-6b4c513c8067217a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-b566af373ae6a53f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-b39cba22fb481708.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-afca19ddf6d757bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-07-27T11:58:29.737Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cpp对象的内存布局(上篇)">
+<meta name="twitter:description" content="前言这几天一直在看c++的基础东西,看到虚拟继承和虚函数这一块,总感觉了解的不深刻,所以在网上找了找博客,也自己动手敲了敲看看结果,感觉理解加深了很多,在这里也总结一下,加深记忆也方便以后的回忆. 我先贴一下我参考的两篇博客的地址,我的测试也是参考上面的代码的:C++对象的内存布局C++虚继承对象的内存布局 我将上面两篇博客的代码在我的电脑上都测试了一下,结果放到下面,因为电脑的进步,我对它们">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/5550522-3b6e40a8843fd561.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/27/Cpp对象的内存布局-上篇/">
+
+
+
+
+
+  <title>Cpp对象的内存布局(上篇) | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/27/Cpp对象的内存布局-上篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Cpp对象的内存布局(上篇)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-27T19:52:46+08:00">
+                2019-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>这几天一直在看c++的基础东西,看到虚拟继承和虚函数这一块,总感觉了解的不深刻,所以在网上找了找博客,也自己动手敲了敲看看结果,感觉理解加深了很多,在这里也总结一下,加深记忆也方便以后的回忆.</p>
+<p>我先贴一下我参考的两篇博客的地址,我的测试也是参考上面的代码的:<br><a href="http://blog.csdn.net/haoel/article/details/3081328" title="C++对象的内存布局" target="_blank" rel="noopener">C++对象的内存布局</a><br><a href="http://blog.csdn.net/bluedog/article/details/4711169" title="C++虚继承对象的内存布局" target="_blank" rel="noopener">C++虚继承对象的内存布局</a></p>
+<p>我将上面两篇博客的代码在我的电脑上都测试了一下,结果放到下面,因为电脑的进步,我对它们的代码也做了一点修改,因为上面两篇博客的博主测试的时候电脑应该是32位的.我的测试平台是Ubuntu 16.04,编译器是版本gcc 5.4.0,电脑是64位.</p>
+<p>注意:这里我不多细说原理,主要是一些C++的基础知识指针类型转换什么的,我们代码的主要目的是为了测试虚继承或者拥有虚函数的对象的内存布局,总共有三个例子,我只描述一下类的结构,然后就直接贴上代码了,最后画出我根据测试结果画出来的内存布局图,不同平台上测试的结果很可能有细微的差别.<strong>另外值得注意的是,代码里的不少结果都是根据已知情况设定的值,比如一个类的virtual table中到底有几个函数指针,这个都是根据已知情况设定的值,另外,多说一句,如果遇到问题,我非常推荐用gdb进行调试,gdb非常的强大,我在测试代码的时候也遇到了问题,用的gdb调试,譬如如果我们打印一个指针的值,如果这个指针是一个函数指针的话,那么gdb会告诉我们这个指针指向哪个函数,这是非常有用的信息.如果读者在用我的代码测试的时候有任何疑惑的话,使用gdb调试即可,相信你绝对不会失望的.</strong></p>
+<h4 id="第一个例子是单一继承-这个例子比较简单-不过也是为我们后面做个铺垫-大家稍微注意下即可"><a href="#第一个例子是单一继承-这个例子比较简单-不过也是为我们后面做个铺垫-大家稍微注意下即可" class="headerlink" title="第一个例子是单一继承,这个例子比较简单,不过也是为我们后面做个铺垫,大家稍微注意下即可."></a>第一个例子是单一继承,这个例子比较简单,不过也是为我们后面做个铺垫,大家稍微注意下即可.<img src="http://upload-images.jianshu.io/upload_images/5550522-3b6e40a8843fd561.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></h4><p>下面贴一下代码,值得注意的是我把int都换成了long,因为在64位系统中,指针的大小是8字节,但是int的大小是4字节,所以如果我们使用int作为类的成员的话,可能会出现编译器产生内存对齐的情况,对我们的分析造成影响,所以我都换为了long,在64位系统下long的大小是8字节.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Parent</span> &#123;</span></span><br><span class="line">  <span class="keyword">long</span> parent;</span><br><span class="line">  Parent() : parent(<span class="number">10</span>) &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Parent::f"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">g</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Parent::g"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">h</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Parent::h"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Child</span> :</span> <span class="keyword">public</span> Parent &#123;</span><br><span class="line">  <span class="keyword">long</span> child;</span><br><span class="line">  Child() : child(<span class="number">20</span>) &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Child::f"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">g_child</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Child::g_child"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">h_child</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Child::h_child"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">GrandChild</span> :</span> <span class="keyword">public</span> Child &#123;</span><br><span class="line">  <span class="keyword">long</span> grandchild;</span><br><span class="line">  GrandChild() : grandchild(<span class="number">30</span>) &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"GrandChild::f"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">g_child</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"GrandChild::g_child"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">h_grandchild</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"GrandChild::h_grandchild"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*func)</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  GrandChild gc;</span><br><span class="line">  <span class="keyword">long</span> **pVtab = (<span class="keyword">long</span> **)&amp;gc;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; (func)pVtab[<span class="number">0</span>][i] != <span class="literal">NULL</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">auto</span> pFunc = (func)pVtab[<span class="number">0</span>][i];</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"["</span> &lt;&lt; i &lt;&lt; <span class="string">"]"</span>;</span><br><span class="line">    pFunc();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)pVtab[<span class="number">1</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)pVtab[<span class="number">2</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)pVtab[<span class="number">3</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面贴一下结果图:<br><img src="http://upload-images.jianshu.io/upload_images/5550522-3d2f1a089009e48a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>那么grandchild对象的内存布局就很明显了:<br><img src="http://upload-images.jianshu.io/upload_images/5550522-6b4c513c8067217a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>有这么几点需要注意一下:</p>
+<ul>
+<li>指向虚函数表的指针是在对象最开始的位置</li>
+<li>后面是存放成员变量的位置,这里因为我变量都使用的long,所以没有对齐的数据,否则可能还会有内存对齐的要求.</li>
+<li>在虚函数表中,由于这些都是public继承,且一路继承下来,所以这些类的成员函数都是放在一起的,否则我们在后面会看到,如果是virtual继承,virtual基类的成员函数和派生类的成员函数并不放在同一个虚函数表内.</li>
+<li>这里,我们需要注意一下函数在内存中的规律,乍一看似乎没有规律可言,因为派生类的成员函数和基类的成员函数是杂乱放在一起的,不过仔细看来我们就会发现这是按照继承和声明的顺序来放置的,最基类的位置地址最低,同一个类的函数位置根据声明顺序来确定,越早声明的地址越低.</li>
+<li>接上一个,这里基类的virtual函数由于被派生类重写了,所以虚函数表内是派生类的成员函数,譬如索引为0,3的函数都是被派生类重写的,所以放的是派生类的成员函数的地址,这也是虚函数动态绑定的原理.</li>
+<li>-1的那个索引项是我用gdb试出来的,这个信息是用来实现RTTI的,有兴趣的朋友可以去搜一下看.</li>
+</ul>
+<h4 id="继续下一个例子-这个例子是多重继承-大概继承图如下"><a href="#继续下一个例子-这个例子是多重继承-大概继承图如下" class="headerlink" title="继续下一个例子,这个例子是多重继承,大概继承图如下:"></a>继续下一个例子,这个例子是多重继承,大概继承图如下:<img src="http://upload-images.jianshu.io/upload_images/5550522-b566af373ae6a53f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></h4><p>这里是Derived类公有派生自Base1-3,并且只重写了f()函数,另外有一个自己的函数g1(),下面是代码,原理同上面一样.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Base1</span> &#123;</span></span><br><span class="line">  <span class="keyword">long</span> base1;</span><br><span class="line">  Base1() : base1(<span class="number">10</span>) &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base1::f"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">g</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base1::g"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">h</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base1::h"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Base2</span> &#123;</span></span><br><span class="line">  <span class="keyword">long</span> base2;</span><br><span class="line">  Base2() : base2(<span class="number">20</span>) &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base2::f"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">g</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base2::g"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">h</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base2::h"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Base3</span> &#123;</span></span><br><span class="line">  <span class="keyword">long</span> base3;</span><br><span class="line">  Base3() : base3(<span class="number">30</span>) &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base3::f"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">g</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base3::g"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">h</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Base3::h"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Derived</span> :</span> <span class="keyword">public</span> Base1, <span class="keyword">public</span> Base2, <span class="keyword">public</span> Base3 &#123;</span><br><span class="line">  <span class="keyword">long</span> derived;</span><br><span class="line">  Derived() : derived(<span class="number">100</span>) &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Derived::f"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">g1</span><span class="params">()</span> </span>&#123; <span class="built_in">cout</span> &lt;&lt; <span class="string">"Derived::g1"</span> &lt;&lt; <span class="built_in">endl</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*func)</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Derived d;</span><br><span class="line">  <span class="keyword">long</span> **pVtab = (<span class="keyword">long</span> **)&amp;d;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">3</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">auto</span> pFunc = (func)pVtab[<span class="number">0</span>][i];</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"["</span> &lt;&lt; i &lt;&lt; <span class="string">"]"</span>;</span><br><span class="line">    pFunc();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)pVtab[<span class="number">1</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">2</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">auto</span> pFunc = (func)pVtab[<span class="number">2</span>][i];</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"["</span> &lt;&lt; i &lt;&lt; <span class="string">"]"</span>;</span><br><span class="line">    pFunc();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)pVtab[<span class="number">3</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">2</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">void</span> (*pFunc)(<span class="keyword">void</span>);</span><br><span class="line">    pFunc = (func)pVtab[<span class="number">4</span>][i];</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"["</span> &lt;&lt; i &lt;&lt; <span class="string">"]"</span>;</span><br><span class="line">    pFunc();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)pVtab[<span class="number">5</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)pVtab[<span class="number">6</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样,我也是在测出大概内存布局的情况下知道一些参数的(笑),下面我贴一下运行的结果:<br><img src="http://upload-images.jianshu.io/upload_images/5550522-b39cba22fb481708.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>根据结果,Derived对象的内存布局就很明显了,我画了一个图来辅助大家理解:<br><img src="http://upload-images.jianshu.io/upload_images/5550522-afca19ddf6d757bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>从这个图来看,相信大家就很容易理解这个Derived对象的内存布局了.为了作图起见,我去掉了关于typeinfo的信息,这个和前面是一样的,都是在vptr指向的位置的前一个位置存放typeinfo的.<br>从这里,我们也有几点需要注意的:</p>
+<ul>
+<li>这里每个父类都是有自己的虚表的,但是Derived会和第一个父类共享虚函数表,注意这个单一继承的相似性,类总是会和自己的父类以及更向上的祖先共享虚函数表的,但是如果有多个父类的话,就会选择第一个父类了.</li>
+<li>这里同单一继承相似,派生类的重写的函数会覆盖掉基类的函数,譬如图上的Derived::f()覆盖掉了所有基类的f()函数,这是实现多态的原理</li>
+<li>同单一继承很像,虚函数表顺序依然是先基类后派生类,先声明的函数靠前,后声明的函数在后面</li>
+</ul>
+<p>为了方便大家阅读,我将这篇又臭又长(笑)拆成了两篇.下篇就在后面,后面这个例子要稍微复杂一点,如果您看到了这里,可以休息一下再继续.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/27/七大经典排序算法总结/" rel="next" title="七大经典排序算法总结">
+                <i class="fa fa-chevron-left"></i> 七大经典排序算法总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/27/Cpp对象的内存布局-下篇/" rel="prev" title="Cpp对象的内存布局(下篇)">
+                Cpp对象的内存布局(下篇) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第一个例子是单一继承-这个例子比较简单-不过也是为我们后面做个铺垫-大家稍微注意下即可"><span class="nav-number">2.</span> <span class="nav-text">第一个例子是单一继承,这个例子比较简单,不过也是为我们后面做个铺垫,大家稍微注意下即可.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#继续下一个例子-这个例子是多重继承-大概继承图如下"><span class="nav-number">3.</span> <span class="nav-text">继续下一个例子,这个例子是多重继承,大概继承图如下:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+

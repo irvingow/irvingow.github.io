@@ -81,17 +81,20 @@
 
 
 
-<meta name="description" content="最近实习需要用到编译一些静态库, 但是静态库编译相互依赖的库也是非常让人头大了, 这里我介绍一个还不错的小办法来解决这个问题. 首先, 用动态库编译. 一般来说, 用动态库编译都比较简单, 实际上在动态库和静态库都存在的情况下, g++也是默认会先链接到动态库的, 所以我们正常编译得到一个可执行文件(或者动态库也行), 然后我们用ldd这个工具看一下这个库所依赖的动态库, 注意这个时候我们只需">
+<meta name="description" content="最近几天,那个墙好像变高了,导致很多服务器用不了了,我运气不错,服务器ip没有被封,不过出现了一个小小的问题,就是之前我说的用kcptun加速服务器有时候会失败,我折腾了好一段时间也没有解决的办法,后来看issues里面好像有人提到了udp干扰的问题,所以udp2raw-tunnel就是用来解决这个问题 先简单介绍下这个东西,udp2raw tunnel，通过raw socket给UDP包加上">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux下寻找静态库依赖的一个小技巧">
-<meta property="og:url" content="http://yoursite.com/2019/04/11/Linux下寻找静态库依赖的一个小技巧/index.html">
+<meta property="og:title" content="绕过udp限制的udp2raw-tunnel">
+<meta property="og:url" content="http://yoursite.com/2019/07/27/绕过udp限制的udp2raw-tunnel/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="最近实习需要用到编译一些静态库, 但是静态库编译相互依赖的库也是非常让人头大了, 这里我介绍一个还不错的小办法来解决这个问题. 首先, 用动态库编译. 一般来说, 用动态库编译都比较简单, 实际上在动态库和静态库都存在的情况下, g++也是默认会先链接到动态库的, 所以我们正常编译得到一个可执行文件(或者动态库也行), 然后我们用ldd这个工具看一下这个库所依赖的动态库, 注意这个时候我们只需">
+<meta property="og:description" content="最近几天,那个墙好像变高了,导致很多服务器用不了了,我运气不错,服务器ip没有被封,不过出现了一个小小的问题,就是之前我说的用kcptun加速服务器有时候会失败,我折腾了好一段时间也没有解决的办法,后来看issues里面好像有人提到了udp干扰的问题,所以udp2raw-tunnel就是用来解决这个问题 先简单介绍下这个东西,udp2raw tunnel，通过raw socket给UDP包加上">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-27T09:17:02.758Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-fd6cd20082ebc1b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5550522-e3c55e0eda3155b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-07-27T12:29:03.022Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux下寻找静态库依赖的一个小技巧">
-<meta name="twitter:description" content="最近实习需要用到编译一些静态库, 但是静态库编译相互依赖的库也是非常让人头大了, 这里我介绍一个还不错的小办法来解决这个问题. 首先, 用动态库编译. 一般来说, 用动态库编译都比较简单, 实际上在动态库和静态库都存在的情况下, g++也是默认会先链接到动态库的, 所以我们正常编译得到一个可执行文件(或者动态库也行), 然后我们用ldd这个工具看一下这个库所依赖的动态库, 注意这个时候我们只需">
+<meta name="twitter:title" content="绕过udp限制的udp2raw-tunnel">
+<meta name="twitter:description" content="最近几天,那个墙好像变高了,导致很多服务器用不了了,我运气不错,服务器ip没有被封,不过出现了一个小小的问题,就是之前我说的用kcptun加速服务器有时候会失败,我折腾了好一段时间也没有解决的办法,后来看issues里面好像有人提到了udp干扰的问题,所以udp2raw-tunnel就是用来解决这个问题 先简单介绍下这个东西,udp2raw tunnel，通过raw socket给UDP包加上">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/5550522-fd6cd20082ebc1b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -121,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/04/11/Linux下寻找静态库依赖的一个小技巧/">
+  <link rel="canonical" href="http://yoursite.com/2019/07/27/绕过udp限制的udp2raw-tunnel/">
 
 
 
 
 
-  <title>Linux下寻找静态库依赖的一个小技巧 | 眼前的code</title>
+  <title>绕过udp限制的udp2raw-tunnel | 眼前的code</title>
   
 
 
@@ -254,7 +257,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/11/Linux下寻找静态库依赖的一个小技巧/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/27/绕过udp限制的udp2raw-tunnel/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="irving lwj">
@@ -271,7 +274,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Linux下寻找静态库依赖的一个小技巧</h1>
+          <h1 class="post-title" itemprop="name headline">绕过udp限制的udp2raw-tunnel</h1>
         
 
         <div class="post-meta">
@@ -283,8 +286,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-11T14:17:03+08:00">
-                2019-04-11
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-27T20:26:52+08:00">
+                2019-07-27
               </time>
             
 
@@ -293,28 +296,6 @@
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -345,20 +326,43 @@
       
         <meta name="referrer" content="no-referrer">
 
-<p>最近实习需要用到编译一些静态库, 但是静态库编译相互依赖的库也是非常让人头大了, 这里我介绍一个还不错的小办法来解决这个问题.</p>
-<h4 id="首先-用动态库编译"><a href="#首先-用动态库编译" class="headerlink" title="首先, 用动态库编译."></a>首先, 用动态库编译.</h4><ol>
-<li>一般来说, 用动态库编译都比较简单, 实际上在动态库和静态库都存在的情况下, g++也是默认会先链接到动态库的, 所以我们正常编译得到一个可执行文件(或者动态库也行), 然后我们用ldd这个工具看一下这个库所依赖的动态库, 注意这个时候我们只需要找到那些动态库所在的路径就好, 假设是PATH吧.</li>
-</ol>
-<h4 id="然后-我们开始使用静态库编译"><a href="#然后-我们开始使用静态库编译" class="headerlink" title="然后, 我们开始使用静态库编译."></a>然后, 我们开始使用静态库编译.</h4><ol start="2">
-<li>这里还有几种链接静态库的方式, 参见我之前的博客, <a href="https://irvingow.github.io/2019/04/04/%E5%85%B3%E4%BA%8Egcc%E9%93%BE%E6%8E%A5%E9%9D%99%E6%80%81%E5%BA%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/#more" target="_blank" rel="noopener">gcc链接静态库的几种方式</a>, 这个时候我们一般会看到很多错误,当然你要是没有错误,那就恭喜了哈哈, 一般我们会遇到一些undefined reference to xxxx. 这个xxxx一般是一个函数名, 其实就是在链接的过程中没有找到这个函数的定义, 因为这个函数的定义可能在另外一个静态库里面, 而我们没有去链接到这个静态库, 这里我就要展示我的小技巧了, 我的小技巧是一个脚本.</li>
-</ol>
-<h4 id="使用脚本找到到底是哪个静态口包含了xxxx这个函数的定义"><a href="#使用脚本找到到底是哪个静态口包含了xxxx这个函数的定义" class="headerlink" title="使用脚本找到到底是哪个静态口包含了xxxx这个函数的定义"></a>使用脚本找到到底是哪个静态口包含了xxxx这个函数的定义</h4><ol start="3">
-<li>先展示一下脚本的代码,其实也不复杂, 用到了nm这个工具<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">if [ $# -lt 1 ]</span><br><span class="line">then</span><br><span class="line">  echo &quot;USAGE: $0 function_name&quot;</span><br><span class="line">  exit 1</span><br><span class="line">fi</span><br><span class="line">for name in $(ls *.a)</span><br><span class="line">do</span><br><span class="line">  res=$(nm -g --defined-only $&#123;name&#125; | grep $1)</span><br><span class="line">  if [ -n &quot;$res&quot; ]</span><br><span class="line">  then</span><br><span class="line">    echo $&#123;name&#125;</span><br><span class="line">    echo $&#123;res&#125;</span><br><span class="line">  fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
+<h4 id="最近几天-那个墙好像变高了-导致很多服务器用不了了-我运气不错-服务器ip没有被封-不过出现了一个小小的问题-就是之前我说的用kcptun加速服务器有时候会失败-我折腾了好一段时间也没有解决的办法-后来看issues里面好像有人提到了udp干扰的问题-所以udp2raw-tunnel就是用来解决这个问题"><a href="#最近几天-那个墙好像变高了-导致很多服务器用不了了-我运气不错-服务器ip没有被封-不过出现了一个小小的问题-就是之前我说的用kcptun加速服务器有时候会失败-我折腾了好一段时间也没有解决的办法-后来看issues里面好像有人提到了udp干扰的问题-所以udp2raw-tunnel就是用来解决这个问题" class="headerlink" title="最近几天,那个墙好像变高了,导致很多服务器用不了了,我运气不错,服务器ip没有被封,不过出现了一个小小的问题,就是之前我说的用kcptun加速服务器有时候会失败,我折腾了好一段时间也没有解决的办法,后来看issues里面好像有人提到了udp干扰的问题,所以udp2raw-tunnel就是用来解决这个问题"></a>最近几天,那个墙好像变高了,导致很多服务器用不了了,我运气不错,服务器ip没有被封,不过出现了一个小小的问题,就是之前我说的用kcptun加速服务器有时候会失败,我折腾了好一段时间也没有解决的办法,后来看issues里面好像有人提到了udp干扰的问题,所以udp2raw-tunnel就是用来解决这个问题</h4><ol>
+<li><p>先简单介绍下这个东西,udp2raw tunnel，通过raw socket给UDP包加上TCP或ICMP header，进而绕过UDP屏蔽或QoS，或在UDP不稳定的环境下提升稳定性。可以有效防止在使用kcptun或者finalspeed的情况下udp端口被运营商限速。支持心跳保活、自动重连，重连后会恢复上次连接，在底层掉线的情况下可以保持上层不掉线。同时有加密、防重放攻击、信道复用的功能。</p>
+</li>
+<li><p>这个的原理大概就是在udp包的上加上tcp的包头,让路由器不会认为这是一个udp的包,udp的包似乎很容易被针对,之前kcptun就有这个问题,速度没有受到影响,但是连接很容易就断掉了,需要重新连接,还是挺麻烦的.<br><img src="http://upload-images.jianshu.io/upload_images/5550522-fd6cd20082ebc1b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+</li>
+<li><p>上图是大概的工作原理,看图不难理解,我们运行在pc上的代理软件将我们的流量通过某个端口先给kcptun,产生udp流量,但是udp流量容易受到干扰,所以我们先将udp流量给udp2raw-tunnel,再由udp2raw-tunnel来将流量伪装为tcp流量再转发给服务器,服务器端也需要运行udp2raw-tunnel,它接收到伪装的tcp流量,然后解密校验之后来获得原来的udp流量,然后kcptun接收udp流量了,通过处理之后将信息发送给服务器代理软件的接收端,代理软件再将我们的流量(往往是一些请求)发送到本来不能被访问的服务器(油管之类的),然后获得响应,用与原来相反的方向将信息发送回来.</p>
+</li>
+<li><p>我们理解了大致的工作原理之后就能使用了,我们需要一个代理软件纸飞机,然后呢,需要kcptun,然后需要udp2raw-tunnel,下面开始是我折腾了小一会的结果:</p>
+<ul>
+<li>首先我们从本地开始,纸飞机的代理要开的,我们的服务器地址是127.0.0.1,这个是我们本机的ip地址,因为这些流量是要先发给kcptun的,服务器端口就写kcptun client在本地监听的端口,比如监听了12321端口,那么我们纸飞机的服务器端口就是12321,不过需要注意的是,纸飞机的密码还是纸飞机的密码,这个和kcptun还有udp2raw-tunnel都没有关系,这个密码是用来纸飞机用来校验解密的.</li>
+<li>然后是kcptun了,我大概说一下参数,首先监听的本地端口是12321,上面说过了,然后是服务器地址,注意这里服务器地址需要改为127.0.0.1,因为我们需要将kcptun的流量转发给udp2raw-tunnel,这里kcptun的服务器端口就是我们udp2raw-tunnel client在本地监听的端口,假设是8888吧.值得注意的是,那个mtu参数需要改为1300或者更小(默认是1350),mtu是最大传输单元的英文缩写,这个太大了好像是会导致服务器无法处理等情况,不同协议对mtu的规定也不一样,例如ip协议就规定mtu最大为1500,不过从我个人的使用感觉来看,mtu太小了会影响网速,所以1200左右就差不多了,也不要太小.</li>
+<li>然后是本地的udp2raw-tunnel,这里本地的监听地址是-l0.0.0.0:8888,然后是服务器地址就是:我们的服务器地址:我们运行在服务器上的udp2raw-tunnel监听的端口.假设地址为45.66.77.88,端口为8855,参数就是-r45.66.77.88:8855.不过需要注意的是这个应用的使用最好需要root权限,使用起来会方便一点.</li>
+<li>然后是服务器端的udp2raw-tunnel,这个的参数实际上就是本地的逆过程,监听本地的8855端口,也就是-l0.0.0.0:8855,然后是-r 127.0.0.1:4000,这里是将流量转发给服务器端的kcptun,4000是kcptun的监听端口.</li>
+<li>最后是kcptun了,在上一步我们已经知道了kcptun的本地监听端口是4000,所以参数中-l :4000,然后服务器地址是127.0.0.1,因为kcptun将流量再转发给纸飞机,目标端口就是纸飞机监听的端口号.注意这里也要设置mtu,kcptun两边mtu最好保持一样.</li>
+<li>到这里就差不多了,这里纸飞机的代理不是我们需要管的东西.我们只需要端口,密码还有加密方式就OK了.</li>
+</ul>
+</li>
+<li><p>这里贴下udp2raw-tunnel的github地址:<a href="https://github.com/wangyu-/udp2raw-tunnel" target="_blank" rel="noopener">udp2raw</a>. 文档里面也有教程,不过我觉得我写的更容易理解一点.</p>
 </li>
 </ol>
-<p>值得注意的是我们需要把这个脚本放到我们之前找到的PATH下面, 这个PATH一般都是一些系统文件存放的地方, 所以我们需要使用sudo命令来将脚本放进去, 再用sudo权限运行, 一般这个时候我们就能找到到底是哪个静态库包含xxxx这个函数的定义了, 我们只需要将这个静态库添加到我们编译时指定的包含路径就好, 需要注意的是可能需要加上-l选项, 比如静态库的名称是libpng.a, 我们就要在编译的时候加上-lpng选项, 否则编译器还是报undefined reference to xxxx哦.</p>
-<p>写到这里就差不多结束了, 这里我们介绍的基本是专门针对要链接静态库的情况, 实际上我们平时可能也不太需要这样做, 这里我只是简单记录一下, 如果不用移植的话, 用动态库就更方便多了, 如果用动态库链接也失败的话, 基本就是编译少了选项, 或者动态库没找到了, 一般也用不到我这个办法(笑), 不过这里记录一下, 兴许以后自己还能用得着, 同时也熟悉了Linux下shell脚本的编写.</p>
+<p>结语:到这里就写的差不多了,不得不感慨通信是个非常有用的东西,网络通信是非常需要我们基础知识的领域,我们十分应该多学点这方面的知识.<br>附录:实际使用的一些参数<br><img src="http://upload-images.jianshu.io/upload_images/5550522-e3c55e0eda3155b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>kcptun:</p>
+<blockquote>
+<p>./client_linux_amd64 -l “:12321” -r “127.0.0.1:8888” -key “xxxxxx” -mode “fast2” -crypt “aes-128” -mtu 1200 -nocomp “false” &gt; kcptun.log 2&gt;&amp;1 &amp;</p>
+</blockquote>
+<p>udp2raw-tunnel:</p>
+<blockquote>
+<p>./udp2raw_amd64 -c -r45.66.77.88:8855 -l0.0.0.0:8888 –raw-mode fakekcp -a -k”passwd”</p>
+</blockquote>
+<p>服务器端:<br>udp2raw-tunnel:</p>
+<blockquote>
+<p>./udp2raw_amd64 -s -l0.0.0.0:8855 -r 127.0.0.1:4000 -k “passwd” –raw-mode fakekcp -a</p>
+</blockquote>
+<p>kcptun:</p>
+<blockquote>
+<p>./client_linux_amd64 -l “:4000” -r “127.0.0.1:22” -key “xxxxxx” -mode “fast2” -crypt “aes-128” -mtu 1200 -nocomp “false” &gt; kcptun.log 2&gt;&amp;1 &amp;</p>
+</blockquote>
 
       
     </div>
@@ -383,8 +387,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/04/关于gcc链接静态库的几种方式/" rel="next" title="关于gcc链接静态库的几种方式">
-                <i class="fa fa-chevron-left"></i> 关于gcc链接静态库的几种方式
+              <a href="/2019/07/27/cpp构造函数深入理解/" rel="next" title="cpp构造函数深入理解">
+                <i class="fa fa-chevron-left"></i> cpp构造函数深入理解
               </a>
             
           </div>
@@ -393,8 +397,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/04/22/linux下多线程死锁调试/" rel="prev" title="linux下多线程死锁调试">
-                linux下多线程死锁调试 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/07/27/树的迭代的一些总结/" rel="prev" title="树的迭代的一些总结">
+                树的迭代的一些总结 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -527,7 +531,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#首先-用动态库编译"><span class="nav-number">1.</span> <span class="nav-text">首先, 用动态库编译.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#然后-我们开始使用静态库编译"><span class="nav-number">2.</span> <span class="nav-text">然后, 我们开始使用静态库编译.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用脚本找到到底是哪个静态口包含了xxxx这个函数的定义"><span class="nav-number">3.</span> <span class="nav-text">使用脚本找到到底是哪个静态口包含了xxxx这个函数的定义</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#最近几天-那个墙好像变高了-导致很多服务器用不了了-我运气不错-服务器ip没有被封-不过出现了一个小小的问题-就是之前我说的用kcptun加速服务器有时候会失败-我折腾了好一段时间也没有解决的办法-后来看issues里面好像有人提到了udp干扰的问题-所以udp2raw-tunnel就是用来解决这个问题"><span class="nav-number">1.</span> <span class="nav-text">最近几天,那个墙好像变高了,导致很多服务器用不了了,我运气不错,服务器ip没有被封,不过出现了一个小小的问题,就是之前我说的用kcptun加速服务器有时候会失败,我折腾了好一段时间也没有解决的办法,后来看issues里面好像有人提到了udp干扰的问题,所以udp2raw-tunnel就是用来解决这个问题</span></a></li></ol></div>
             
 
           </div>
