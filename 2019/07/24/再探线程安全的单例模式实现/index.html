@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
+<meta name="description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;l">
 <meta property="og:type" content="article">
 <meta property="og:title" content="再探线程安全的单例模式实现">
 <meta property="og:url" content="http://yoursite.com/2019/07/24/再探线程安全的单例模式实现/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
+<meta property="og:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;l">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-24T15:52:23.277Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="再探线程安全的单例模式实现">
-<meta name="twitter:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;lt;">
+<meta name="twitter:description" content="最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。 单例模式的实现123456789101112131415161718192021222324template&amp;l">
 
 
 
@@ -343,7 +343,9 @@
       
 
       
-        <p>最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。</p>
+        <meta name="referrer" content="no-referrer">
+
+<p>最近在看陈硕的moduo，里面提到了线程安全的单例实现，不由想到我之前写的c++单例模式的几种实现，按moduo中的说法，按照cpu指令乱序执行的影响，因此DCL（double check locking）是靠不住的，这里陈硕提出了一种基于pthread_once的单例模式的实现。</p>
 <h4 id="单例模式的实现"><a href="#单例模式的实现" class="headerlink" title="单例模式的实现"></a>单例模式的实现</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> :</span> boost::noncopyable</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">static</span> T&amp; <span class="title">instance</span><span class="params">()</span></span>&#123;</span><br><span class="line">    pthread_once(&amp;ponce_, &amp;Singleton::init);</span><br><span class="line">    <span class="keyword">return</span> *value_;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">  Singleton();</span><br><span class="line">  ~Singleton();</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">    value_ = <span class="keyword">new</span> T();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">pthread_once_t</span> ponce_;</span><br><span class="line">  <span class="keyword">static</span> T* value_;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/// 必须在头文件中声明static变量</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">pthread_once_t</span> Singleton&lt;T&gt;::ponce_ = PTHREAD_ONCE_INIT;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">T* Singleton&lt;T&gt;::value_ = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
 
 <h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p>这个Singleton倒是没有用到之前的各种加锁技巧等等，用pthread_once_t来保证lazy-initialization的线程安全。线程安全性由pthreads库来保证。使用方式也比较简单：</p>
@@ -464,7 +466,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

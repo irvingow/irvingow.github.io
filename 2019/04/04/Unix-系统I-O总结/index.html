@@ -81,18 +81,18 @@
 
 
 
-<meta name="description" content="看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.  文件描述符:对于内核而言,所有打开的文件都是通过文件描述符引用的.(所以系统调用的I/O函数参数基本都是文件描述符,而标准I/O库函数却不是这样).  文件描述符是一个非负整数,其中0,1,2已经与标准输入,标准输入,标准错误关联(默认情况下,实际上我们也可以修改,但是并不推荐). 当打开现有文件或者创建一个新文件">
+<meta name="description" content="看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.  文件描述符:对于内核而言,所有打开的文件都是通过文件描述符引用的.(所以系统调用的I/O函数参数基本都是文件描述符,而标准I/O库函数却不是这样).  文件描述符是一个非负整数,其中0,1,2已经与标准输入,标准输入,标准错误关联(默认情况下,实际上我们也可以修改,但是并不推荐). 当打开现有文件或者创建一个新">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unix 系统I&#x2F;O总结">
 <meta property="og:url" content="http://yoursite.com/2019/04/04/Unix-系统I-O总结/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.  文件描述符:对于内核而言,所有打开的文件都是通过文件描述符引用的.(所以系统调用的I/O函数参数基本都是文件描述符,而标准I/O库函数却不是这样).  文件描述符是一个非负整数,其中0,1,2已经与标准输入,标准输入,标准错误关联(默认情况下,实际上我们也可以修改,但是并不推荐). 当打开现有文件或者创建一个新文件">
+<meta property="og:description" content="看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.  文件描述符:对于内核而言,所有打开的文件都是通过文件描述符引用的.(所以系统调用的I/O函数参数基本都是文件描述符,而标准I/O库函数却不是这样).  文件描述符是一个非负整数,其中0,1,2已经与标准输入,标准输入,标准错误关联(默认情况下,实际上我们也可以修改,但是并不推荐). 当打开现有文件或者创建一个新">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://wenjingliu.com/wp-content/uploads/2017/08/6ab76f1e6b5a6fd91d64fa4ee7242dac.png">
-<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Unix 系统I&#x2F;O总结">
-<meta name="twitter:description" content="看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.  文件描述符:对于内核而言,所有打开的文件都是通过文件描述符引用的.(所以系统调用的I/O函数参数基本都是文件描述符,而标准I/O库函数却不是这样).  文件描述符是一个非负整数,其中0,1,2已经与标准输入,标准输入,标准错误关联(默认情况下,实际上我们也可以修改,但是并不推荐). 当打开现有文件或者创建一个新文件">
+<meta name="twitter:description" content="看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.  文件描述符:对于内核而言,所有打开的文件都是通过文件描述符引用的.(所以系统调用的I/O函数参数基本都是文件描述符,而标准I/O库函数却不是这样).  文件描述符是一个非负整数,其中0,1,2已经与标准输入,标准输入,标准错误关联(默认情况下,实际上我们也可以修改,但是并不推荐). 当打开现有文件或者创建一个新">
 <meta name="twitter:image" content="http://wenjingliu.com/wp-content/uploads/2017/08/6ab76f1e6b5a6fd91d64fa4ee7242dac.png">
 
 
@@ -345,7 +345,9 @@
       
 
       
-        <p> 看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.</p>
+        <meta name="referrer" content="no-referrer">
+
+<p> 看完了apue关于系统I/O的几章,打算还是总结一下,不然在脑子总是不成条理.</p>
 <ol>
 <li><p>文件描述符:对于内核而言,所有打开的文件都是通过文件描述符引用的.(所以系统调用的I/O函数参数基本都是文件描述符,而标准I/O库函数却不是这样).</p>
 <ol>
@@ -572,7 +574,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x),">
+<meta name="description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x">
 <meta property="og:type" content="article">
 <meta property="og:title" content="单链表寻找是否有环及环位置">
 <meta property="og:url" content="http://yoursite.com/2019/03/04/单链表寻找是否有环及环位置/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x),">
+<meta property="og:description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="单链表寻找是否有环及环位置">
-<meta name="twitter:description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x),">
+<meta name="twitter:description" content="确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的. 123456789101112131415161718192021struct ListNode&amp;#123;    int val;    ListNode *next;    ListNode(int x): val(x">
 
 
 
@@ -343,7 +343,9 @@
       
 
       
-        <ol>
+        <meta name="referrer" content="no-referrer">
+
+<ol>
 <li><p>确定一个单链表中是否有环,如果有的话找出环连接到的节点的位置,如果没有就返回NULL.这道题我记得好像看到别人在面试题中见到过,如果只是单纯的找是否有环的话还是很简单的.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct ListNode</span><br><span class="line">&#123;</span><br><span class="line">    int val;</span><br><span class="line">    ListNode *next;</span><br><span class="line">    ListNode(int x): val(x), next(NULL) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">bool hasCycle(ListNode *head)</span><br><span class="line">&#123;</span><br><span class="line">	if(head == NULL)</span><br><span class="line">		return false;</span><br><span class="line">	ListNode *slowNode,*fastNode;</span><br><span class="line">	slowNode = fastNode = head;</span><br><span class="line">	while(fastNode-&gt;next &amp;&amp; fastNode-&gt;next-&gt;next)</span><br><span class="line">	&#123;</span><br><span class="line">		slowNode = slowNode-&gt;next;</span><br><span class="line">		fastNode = fastNode-&gt;next-&gt;next;</span><br><span class="line">		if(slowNode == fastNode)</span><br><span class="line">			return true;</span><br><span class="line">	&#125;</span><br><span class="line">	return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -472,7 +474,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

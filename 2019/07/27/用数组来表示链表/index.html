@@ -81,21 +81,21 @@
 
 
 
-<meta name="description" content="前言 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法. 题目 我和书上一样了, 先上题目, 为了不浪费时间, 我直接上图片了.   这题目如果是我第一次做的话, 我会直">
+<meta name="description" content="前言 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法. 题目 我和书上一样了, 先上题目, 为了不浪费时间, 我直接上图片了.   这题目如果是我第一次做的话, 我">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用数组来表示链表">
 <meta property="og:url" content="http://yoursite.com/2019/07/27/用数组来表示链表/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="前言 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法. 题目 我和书上一样了, 先上题目, 为了不浪费时间, 我直接上图片了.   这题目如果是我第一次做的话, 我会直">
+<meta property="og:description" content="前言 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法. 题目 我和书上一样了, 先上题目, 为了不浪费时间, 我直接上图片了.   这题目如果是我第一次做的话, 我">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-6a0d6a0ecf0739a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-38d7b822dd16b17c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-0798df097ab93ce6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-611fa9f3e2869729.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-07-27T08:43:14.437Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用数组来表示链表">
-<meta name="twitter:description" content="前言 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法. 题目 我和书上一样了, 先上题目, 为了不浪费时间, 我直接上图片了.   这题目如果是我第一次做的话, 我会直">
+<meta name="twitter:description" content="前言 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法. 题目 我和书上一样了, 先上题目, 为了不浪费时间, 我直接上图片了.   这题目如果是我第一次做的话, 我">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-6a0d6a0ecf0739a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -348,7 +348,9 @@
       
 
       
-        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p> 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法.</p>
+        <meta name="referrer" content="no-referrer">
+
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p> 经历一段时间的找实习, 还是深深体会到算法的重要性, 感觉以前没去做做ACM很可惜, 不过也不想太多, 既有个人的原因也有大环境的原因, 最近在看刘汝佳的算法竞赛书, 看到用数组来比较链表和双向链表, 感觉还挺少见, 所以特此来写篇博客记录一下, 加深印象的同时希望也能记住用法.</p>
 <h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p> 我和书上一样了, 先上题目, 为了不浪费时间, 我直接上图片了.<br><img src="https://upload-images.jianshu.io/upload_images/5550522-6a0d6a0ecf0739a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>  这题目如果是我第一次做的话, 我会直接使用链表也就是stl中的list来放置数据, 当然思路是没有问题的, 但是里面会涉及到很多的插入删除操作, 还是比较复杂的.不过在这里, 书的作者给出了一种新的方法, 用的也是链表, 但是用的是基于数组的链表.<br>  思路是每输入一个字符就把它存起来, 设输入字符串是s[1~n], 则可以用next[i]表示在当前显示屏中s[i]右边的字符编号(即在s中的下标).<br>  为了方便起见, 假设字符串s的最前面还有一个虚拟的s[0], 则next[0]就可以表示显示屏中最左边的字符. 再用一个变量cur表示光标位置, 即当前光标位于s[cur]的右边. cur=0说明光标位于”虚拟字符”s[0]的右边, 即显示屏的最左边.为了移动光标, 还需要用一个变量last表示显示屏的最后一个字符是s[last].</p>
 <p>  思路说起来简单, 但是理解起来倒是不算轻松, 让我们来看看这个算法的核心, next数组, 这里有三个变量, next, i, s, 其中i是索引, s[i]表示当前的字符, next[i]中是下一个字符的在s中的索引, 在这里来看, 很明显, 这是一个链表, next数组就担当了指针的作用. 接下来还有一个小难点, 因为我们是不断读入字符的, 所以next数组在不断放置索引, 也就是说当i = 10的时候, next[1-10]的内容实际上已经固定了, 这个时候如果我们需要移动光标的话, 也就是说遇到’[‘, 我们需要做的不是改变next[1-10]的内容, 而是改变next[0]的内容, 让它指向新的位置, 同时不断的读取新的字符, 如果读取完所有的字符或者遇到’]’, 还不能忘了将next的最后一位置为之前的头部, 比如是1, 因为之前没遇到’[‘之前是从1开始输出的.<br>  为了方便大家理解, 我自己手画了一个结果图, 相信大家看了之后肯定会好理解很多:<br>  <img src="https://upload-images.jianshu.io/upload_images/5550522-38d7b822dd16b17c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
@@ -402,6 +404,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/27/linux内存管理-伙伴算法和slab算法/" rel="prev" title="linux内存管理--伙伴算法和slab算法">
+                linux内存管理--伙伴算法和slab算法 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -478,7 +484,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

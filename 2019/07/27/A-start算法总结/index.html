@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的">
+<meta name="description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红">
 <meta property="og:type" content="article">
 <meta property="og:title" content="A-start算法总结">
 <meta property="og:url" content="http://yoursite.com/2019/07/27/A-start算法总结/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的">
+<meta property="og:description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-fa6f268c3f136da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-42e533faa38150f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -94,10 +94,10 @@
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-b8986ac75fa61bc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-a8d9b27100f2e054.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-56e82cfe520d9e38.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-07-27T08:10:17.955Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="A-start算法总结">
-<meta name="twitter:description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的">
+<meta name="twitter:description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-fa6f268c3f136da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -350,7 +350,9 @@
       
 
       
-        <p> 准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:<a href="https://blog.csdn.net/hitwhylz/article/details/23089415" target="_blank" rel="noopener">A星算法详解</a>, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路.</p>
+        <meta name="referrer" content="no-referrer">
+
+<p> 准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:<a href="https://blog.csdn.net/hitwhylz/article/details/23089415" target="_blank" rel="noopener">A星算法详解</a>, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路.</p>
 <h4 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h4><p>先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的最短路径.<br><img src="https://upload-images.jianshu.io/upload_images/5550522-fa6f268c3f136da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>这里我们为了简化问题,将地图划分为若干个方块,这个人每次只能移动到相邻的格子(也就是当前位置的8邻域).</p>
 <h4 id="开始搜索"><a href="#开始搜索" class="headerlink" title="开始搜索"></a>开始搜索</h4><p>现在我们开始搜索最短路径:</p>
 <ol>
@@ -488,7 +490,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

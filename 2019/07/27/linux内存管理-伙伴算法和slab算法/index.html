@@ -81,26 +81,19 @@
 
 
 
-<meta name="description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
+<meta name="description" content="前言得有半个多月没写博客了, 说来甚是惭愧, 不过这半个多月一直也都是在刷题, 正好也有个比赛出去了一段时间, 导致了一直也没碰这个博客, 等这段面试集中期过去了, 可以恢复正常的写博客了. 今天想要总结 都的是linux下内存管理的一些问题. 内存管理会出现的问题不断的内存分配与释放会导致很多内存碎片, 由于内存在不断的分配过程中越分配越小, 所以在后期很难找到一块较大的内存满足程序的需求,">
 <meta property="og:type" content="article">
-<meta property="og:title" content="字符串匹配KMP算法">
-<meta property="og:url" content="http://yoursite.com/2019/07/27/字符串匹配KMP算法/index.html">
+<meta property="og:title" content="linux内存管理--伙伴算法和slab算法">
+<meta property="og:url" content="http://yoursite.com/2019/07/27/linux内存管理-伙伴算法和slab算法/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
+<meta property="og:description" content="前言得有半个多月没写博客了, 说来甚是惭愧, 不过这半个多月一直也都是在刷题, 正好也有个比赛出去了一段时间, 导致了一直也没碰这个博客, 等这段面试集中期过去了, 可以恢复正常的写博客了. 今天想要总结 都的是linux下内存管理的一些问题. 内存管理会出现的问题不断的内存分配与释放会导致很多内存碎片, 由于内存在不断的分配过程中越分配越小, 所以在后期很难找到一块较大的内存满足程序的需求,">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050104.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050105.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050107.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050110.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050113.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png">
-<meta property="og:updated_time" content="2019-07-27T09:15:23.336Z">
+<meta property="og:image" content="https://img-blog.csdn.net/20140102093810312?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMzAwOTU3NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:updated_time" content="2019-07-27T09:08:59.354Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="字符串匹配KMP算法">
-<meta name="twitter:description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
-<meta name="twitter:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png">
+<meta name="twitter:title" content="linux内存管理--伙伴算法和slab算法">
+<meta name="twitter:description" content="前言得有半个多月没写博客了, 说来甚是惭愧, 不过这半个多月一直也都是在刷题, 正好也有个比赛出去了一段时间, 导致了一直也没碰这个博客, 等这段面试集中期过去了, 可以恢复正常的写博客了. 今天想要总结 都的是linux下内存管理的一些问题. 内存管理会出现的问题不断的内存分配与释放会导致很多内存碎片, 由于内存在不断的分配过程中越分配越小, 所以在后期很难找到一块较大的内存满足程序的需求,">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20140102093810312?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMzAwOTU3NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
 
 
 
@@ -130,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/07/27/字符串匹配KMP算法/">
+  <link rel="canonical" href="http://yoursite.com/2019/07/27/linux内存管理-伙伴算法和slab算法/">
 
 
 
 
 
-  <title>字符串匹配KMP算法 | 眼前的code</title>
+  <title>linux内存管理--伙伴算法和slab算法 | 眼前的code</title>
   
 
 
@@ -263,7 +256,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/27/字符串匹配KMP算法/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/27/linux内存管理-伙伴算法和slab算法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="irving lwj">
@@ -280,7 +273,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">字符串匹配KMP算法</h1>
+          <h1 class="post-title" itemprop="name headline">linux内存管理--伙伴算法和slab算法</h1>
         
 
         <div class="post-meta">
@@ -292,7 +285,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-27T16:20:31+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-27T17:01:39+08:00">
                 2019-07-27
               </time>
             
@@ -315,8 +308,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithm</span>
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
                   </a>
                 </span>
 
@@ -354,11 +347,45 @@
       
         <meta name="referrer" content="no-referrer">
 
-<p> 好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了.</p>
-<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于搬运一下吧,顺便加深一下自己的印象,免得看过就忘.这是原博客地址:<a href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html" title="字符串匹配的KMP算法-阮一峰日志" target="_blank" rel="noopener">字符串匹配的KMP算法-阮一峰日志</a></p>
-<h4 id="普通的字符串匹配算法"><a href="#普通的字符串匹配算法" class="headerlink" title="普通的字符串匹配算法"></a>普通的字符串匹配算法</h4><p>普通的字符串匹配算法是明显低效的, 由于每一次匹配失败都会导致回滚到上次匹配成功的第一个字母的后面一个字母, 因此是浪费了时间的, 这样说可能不容易理解, 举个例子来看, 比如现在有字符串AAAAHAAAHAHAHA, 我们想找找HAHAHA是否存在与前面的字符串中, 当我们比较到第五个字符串的时候, 是匹配的,即H, 然后匹配下一个字符A, 发现也是匹配的, 继续, 发现原字符串的下一个字符是A, 但是我们期望的是H, 因此匹配失败, 这个时候普通的匹配算法会从第六个字符开始匹配, 也就是A, 这个时候肯定是匹配失败的, 实际上我们直观上来看就是很笨的行为, 我不太好形容, 但是因为我们已经成功匹配了2个字符, 即我们已经知道了原字符串中H下一个字符是A了, 我们想要匹配的字符第一个字符是H, 所以这样匹配明显是会失败的, 也就是说这点会导致我们的时间复杂度增加, 这也就是KMP算法改进的地方吧.</p>
-<h4 id="KMP算法"><a href="#KMP算法" class="headerlink" title="KMP算法"></a>KMP算法</h4><p>我将主要流程贴点图吧, 具体就不细说, 其实理解起来不太难<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png" alt=" "><br>  下一步<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050104.png" alt=" "><br>  直到匹配到第一个字符<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050105.png" alt=" "><br>  向后匹配<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050107.png" alt="a"><br>  找到第一个不匹配的,需要重新开始匹配,这个时候就像我们在上面说的, 肯定不是直接向后移动1位开始匹配, 但是需要移动多少位呢, 这就是KMP算法会告诉我们的<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png" alt="a"><br>  先不管这个表怎么算的, 我们先用着, 后面会有解释<br>  计算移动位数的公式是:<br>  移动位数 = 已匹配的字符数 - 对应的部分匹配值<br>  在这里已匹配的字符数是6, 最后一个匹配的字符的部分匹配值查表为2, 故移动位数为4 = 6 - 2<br>  所以我们就跳到第8位开始继续匹配, 如下图<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050110.png" alt="a"><br>  重复上面的过程, 直到找到<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050113.png" alt="a"><br>  如果要继续搜索, 就向后移动7位 = 7 - 0, 注意这里的7位不是字符串的长度, 是通过KMP算法计算出来的.</p>
-<h4 id="部分匹配表的计算"><a href="#部分匹配表的计算" class="headerlink" title="部分匹配表的计算"></a>部分匹配表的计算</h4><p>首先，要了解两个概念：”前缀”和”后缀”。 “前缀”指除了最后一个字符以外，一个字符串的全部头部组合；”后缀”指除了第一个字符以外，一个字符串的全部尾部组合。<br>“部分匹配值”就是”前缀”和”后缀”的最长的共有元素的长度。以”ABCDABD”为例:<br>－　“A”的前缀和后缀都为空集，共有元素的长度为0；<br>－　“AB”的前缀为[A]，后缀为[B]，共有元素的长度为0；<br>－　“ABC”的前缀为[A, AB]，后缀为[BC, C]，共有元素的长度0；<br>－　“ABCD”的前缀为[A, AB, ABC]，后缀为[BCD, CD, D]，共有元素的长度为0；<br>－　“ABCDA”的前缀为[A, AB, ABC, ABCD]，后缀为[BCDA, CDA, DA, A]，共有元素为”A”，长度为1；<br>－　“ABCDAB”的前缀为[A, AB, ABC, ABCD, ABCDA]，后缀为[BCDAB, CDAB, DAB, AB, B]，共有元素为”AB”，长度为2；<br>－　“ABCDABD”的前缀为[A, AB, ABC, ABCD, ABCDA, ABCDAB]，后缀为[BCDABD, CDABD, DABD, ABD, BD, D]，共有元素的长度为0。<br>上面也就是部分匹配表的由来:<br><img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png" alt=" "><br>部分匹配的实质就是因为字符串内部的重复, 很好理解, 相信大家稍微动下脑筋都能看出来.</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>得有半个多月没写博客了, 说来甚是惭愧, 不过这半个多月一直也都是在刷题, 正好也有个比赛出去了一段时间, 导致了一直也没碰这个博客, 等这段面试集中期过去了, 可以恢复正常的写博客了. 今天想要总结 都的是linux下内存管理的一些问题.</p>
+<h4 id="内存管理会出现的问题"><a href="#内存管理会出现的问题" class="headerlink" title="内存管理会出现的问题"></a>内存管理会出现的问题</h4><p>不断的内存分配与释放会导致很多内存碎片, 由于内存在不断的分配过程中越分配越小, 所以在后期很难找到一块较大的内存满足程序的需求, 这个问题的出现的一个原因是在内存释放的时候, 不能把相邻的空闲内存合并为更大的内存, 为了解决这些问题, 我们一般有如下解决办法:</p>
+<ul>
+<li>小块内存单独分配, 大块内存由系统自动分配.(stl使用的就是这种方式, 当需要的内存大小于128KB时, 会由第二级内存配置器来进行分配, 第二级内存配置器使用的是free list链表, 用来给小块内存分配内存, 大于128KB的内存由一级内存配置器来进行分配, 可以认为是由系统来进行分配)</li>
+<li>伙伴算法</li>
+<li>slab算法</li>
+</ul>
+<p>后两种就是linux下使用的解决办法.</p>
+<h4 id="伙伴算法"><a href="#伙伴算法" class="headerlink" title="伙伴算法"></a>伙伴算法</h4><ul>
+<li>将空闲内存分为m个组, 第一组储存2^0个单位的内存块, 第二组储存2^1个单位的内存块, 第三组储存2^2个单位的储存块, 以此类推, 直到m组.</li>
+<li>每个组是一个链表, 用来储存同等大小的内存块.</li>
+<li>伙伴块的大小是固定的, 并且同一个组里面的内存块是伙伴.</li>
+</ul>
+<p>分配内存的过程:</p>
+<ul>
+<li>如果申请的内存大小是n个单位块, 则先将n向上取整为2的n次幂, 假设为s, 然后我们从前面的数组中定位到s.</li>
+<li>如果该组中有剩余内存块就分配出去</li>
+<li>如果没有剩余内存块的话, 向上查找, 然后再将该内存块分割出来, 并将剩余的块放到数组中去.</li>
+</ul>
+<p>举个例子吧, 如果我们需要的是5个单位大小的内存块, 先向上取整为2的幂次方, 最近的也就是8, 所以我们去第四组看看, 如果这个链表为空的话, 也就是说如果这个链表中没有空闲内存给我们的话, 我们就向上找, 定位到第五组, 如果这个链表不为空, 那么我们取出这个空闲内存块, 然后分割出大小为8个单位块的内存供用户使用, 然后将剩余的8个单位块大小的内存块放到第四组的链表中去.</p>
+<p>伙伴算法内存归并的过程:</p>
+<ul>
+<li>我们检测归还内存的伙伴内存块是否空闲, 如果空闲就合并在一起, 不空闲就直接放回到合适的链表中.</li>
+<li>一般来说, 伙伴算法中会使用位图来记录内存块是否被使用, 用于伙伴内存的内并.</li>
+</ul>
+<p>伙伴算法的优缺点:<br>优点: 分配和回收内存都十分的方便, 可以解决外部碎片的问题, 在不断的回收和释放过程中仍然可以保存有较大的内存块. 分配内存速度也很快, 基本是O(lgN)的效率.<br>缺点: 导致较大的内部碎片, 比如我们需要一个9个单位块大小的内存块, 但是按伙伴算法会直接给我们分配一个16个单位块大小的内存块, 显然有7个单位块大小的内存是被浪费的. 同时, 如果在分配和回收比较多的情况下, 为了避免无用的合并, 应该设置链表中内存块的低潮个数, 只有当链表中内存块个数小于某个值时, 并不合并伙伴内存块, 只在高于低潮个数的情况下再合并.</p>
+<h4 id="slab算法"><a href="#slab算法" class="headerlink" title="slab算法"></a>slab算法</h4><p>一般来说, 伙伴算法都用于比较大的内存分配情况下, linux下的伙伴算法使用页为单位, 而页的大小基本都是4KB, 因此对于小块内存的分配和回收, 伙伴算法就不太适用了, 这个时候我们就需要用到slab算法或者叫slab机制.</p>
+<ul>
+<li>slab分配器是最早Jeff Bonwick在SunOS中使用的一种分配内存的方式, slab分配器的核心是对象缓存. 在内核中, 会为有限的对象集(例如文件描述符或进程描述符或其他常见数据结构)分配大量内存. Jeff发现对内核中普通对象进行初始化的时间超过了对其进行分配和释放所需的时间, 因此他的结论是对于常用的一些数据结构, 内核不应该将内存释放回一个全局的内存池, 而是将内存保持为针对特定目的而初始化的状态. 例如, 如果内存被分配给了一个互斥锁, 那么只需要在为这个互斥锁首次分配内存的时候执行一次互斥锁初始化函数, 后续如果还要用到这块内存作为互斥锁的话, 就不再需要初始化了, 因为在锁被释放之后, 内存并没有被用作其他用途或被破坏, 因此仍然处于所需的状态.</li>
+<li>linux slab分配器使用了这种思想和其他一些思想来构建一个在空间和时间上都具有高效性的内存分配器.<br><img src="https://img-blog.csdn.net/20140102093810312?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMzAwOTU3NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></li>
+</ul>
+<p>上图给出了slab结构的高层组织结构, 在最高层是cache_chain, 这是一个slab缓存的链接列表,<br>每个缓存都包含了一个 slabs 列表，这是一段连续的内存块（通常都是页面）。存在3 种 slab:</p>
+<ol>
+<li>slabs_full:完全分配的slab</li>
+<li>slabs_partial:部分分配的slab</li>
+<li>slabs_empty:空slab，或者没有对象被分配</li>
+</ol>
+<p>slab 列表中的每个 slab都是一个连续的内存块（一个或多个连续页），它们被划分成一个个对象。这些对象是从特定缓存中进行分配和释放的基本元素。注意 slab 是 slab分配器进行操作的最小分配单位，因此如果需要对 slab 进行扩展，这也就是所扩展的最小值。通常来说，每个 slab 被分配为多个对象.<br>由于对象是从 slab 中进行分配和释放的，因此单个 slab 可以在 slab列表之间进行移动。例如，当一个 slab中的所有对象都被使用完时，就从slabs_partial 列表中移动到 slabs_full 列表中。当一个 slab完全被分配并且有对象被释放后，就从 slabs_full 列表中移动到slabs_partial 列表中。当所有对象都被释放之后，就从 slabs_partial 列表移动到 slabs_empty 列表中。</p>
+<p>slab算法优点: 很明显, 这个算法的引入是大大增加了内核的效率的, 因为在内核中很多数据结构的分配和释放是非常频繁的, 比如文件描述符或进程描述符或Socket等等. 使用slab算法大大提高了内核的效率, 同时也避免了小的内存对象不断分配和释放可能带来的碎片的问题. 最后 slab算法还可以支持硬件缓存对齐和着色，这允许不同缓存中的对象占用相同的缓存行，从而提高缓存的利用率并获得更好的性能。</p>
 
       
     </div>
@@ -383,8 +410,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/27/A-start算法总结/" rel="next" title="A-start算法总结">
-                <i class="fa fa-chevron-left"></i> A-start算法总结
+              <a href="/2019/07/27/用数组来表示链表/" rel="next" title="用数组来表示链表">
+                <i class="fa fa-chevron-left"></i> 用数组来表示链表
               </a>
             
           </div>
@@ -392,10 +419,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/27/用数组来表示链表/" rel="prev" title="用数组来表示链表">
-                用数组来表示链表 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -527,7 +550,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#普通的字符串匹配算法"><span class="nav-number">2.</span> <span class="nav-text">普通的字符串匹配算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KMP算法"><span class="nav-number">3.</span> <span class="nav-text">KMP算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部分匹配表的计算"><span class="nav-number">4.</span> <span class="nav-text">部分匹配表的计算</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存管理会出现的问题"><span class="nav-number">2.</span> <span class="nav-text">内存管理会出现的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#伙伴算法"><span class="nav-number">3.</span> <span class="nav-text">伙伴算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#slab算法"><span class="nav-number">4.</span> <span class="nav-text">slab算法</span></a></li></ol></div>
             
 
           </div>

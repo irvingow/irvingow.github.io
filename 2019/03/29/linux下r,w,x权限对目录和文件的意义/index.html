@@ -81,12 +81,12 @@
 
 
 
-<meta name="description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在Li">
+<meta name="description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux下r,w,x权限对目录和文件的意义">
 <meta property="og:url" content="http://yoursite.com/2019/03/29/linux下r,w,x权限对目录和文件的意义/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在Li">
+<meta property="og:description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-db1db48af262a34d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-2ebf9bcfaff59c41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -99,10 +99,10 @@
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-1cac6dd46707f50c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-7d41209f7d96ccd3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-5c87eb8d859b35cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux下r,w,x权限对目录和文件的意义">
-<meta name="twitter:description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在Li">
+<meta name="twitter:description" content="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下. 首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:我们可以看到, 在">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-db1db48af262a34d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -355,7 +355,9 @@
       
 
       
-        <h3 id="实习遇到需要检测目录的可用性-这里记录一下Linux系统下r-w-x权限对目录和文件的意义-以前看unix环境高级编程的时候好像看过-不过印象不深-这里记录一下"><a href="#实习遇到需要检测目录的可用性-这里记录一下Linux系统下r-w-x权限对目录和文件的意义-以前看unix环境高级编程的时候好像看过-不过印象不深-这里记录一下" class="headerlink" title="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下."></a>实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下.</h3><ol>
+        <meta name="referrer" content="no-referrer">
+
+<h3 id="实习遇到需要检测目录的可用性-这里记录一下Linux系统下r-w-x权限对目录和文件的意义-以前看unix环境高级编程的时候好像看过-不过印象不深-这里记录一下"><a href="#实习遇到需要检测目录的可用性-这里记录一下Linux系统下r-w-x权限对目录和文件的意义-以前看unix环境高级编程的时候好像看过-不过印象不深-这里记录一下" class="headerlink" title="实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下."></a>实习遇到需要检测目录的可用性, 这里记录一下Linux系统下r,w,x权限对目录和文件的意义, 以前看unix环境高级编程的时候好像看过, 不过印象不深, 这里记录一下.</h3><ol>
 <li><p>首先简单介绍一下文件的权限, 在Linux下, 一切皆文件, 当然也包括目录, 这里我们说下文件, 先上个例子, 下面是我们该目录下文件的关系图:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-db1db48af262a34d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>, 然后我们用ll指令列出该目录下文件的权限, 如下图所示:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-2ebf9bcfaff59c41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br><img src="https://upload-images.jianshu.io/upload_images/5550522-0795d8dd73261554.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>我们可以看到, 在Linux下文件的权限有10位, 第一位代表的是文件的类型, 如果是目录的话就是d,也就是英文目录的首字母, 如果只是普通文件的话就是-, 如果是其他类型文件的话还可能有其他的标志, 这里不具体介绍, 不过由于Linux下一切皆文件, 所以类型还是蛮多的, 比如有l是符号链接文件, 字符设备是c, 块设备文件是b, 其他不多介绍. 后来的几位是共9位, usr, group, all各三位, 三位分别表示rwx, 也就是所谓的读写执行权限,</p>
 </li>
 <li><p>权限对目录的意义</p>
@@ -498,7 +500,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

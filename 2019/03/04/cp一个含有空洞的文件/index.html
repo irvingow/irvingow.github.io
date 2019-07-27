@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段">
+<meta name="description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一">
 <meta property="og:type" content="article">
 <meta property="og:title" content="cp一个含有空洞的文件">
 <meta property="og:url" content="http://yoursite.com/2019/03/04/cp一个含有空洞的文件/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段">
+<meta property="og:description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="cp一个含有空洞的文件">
-<meta name="twitter:description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段">
+<meta name="twitter:description" content="apue 3rd exercises4.6最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一">
 
 
 
@@ -343,7 +343,9 @@
       
 
       
-        <h4 id="apue-3rd-exercises4-6"><a href="#apue-3rd-exercises4-6" class="headerlink" title="apue 3rd exercises4.6"></a>apue 3rd exercises4.6</h4><p>最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段字节中有不少字节为0的情况,所以这种方式的cp未免太过简单.之后又看到一个觉得靠谱的思路,也就是我下面要介绍的思路.</p>
+        <meta name="referrer" content="no-referrer">
+
+<h4 id="apue-3rd-exercises4-6"><a href="#apue-3rd-exercises4-6" class="headerlink" title="apue 3rd exercises4.6"></a>apue 3rd exercises4.6</h4><p>最近看apue遇到一个很有意思的习题,让我们实现自己的cp函数,他可以copy一个含有空洞的文件但是并不将字节0写到输入文件中去,我开始也并没有思路仅仅,之后Google之后看到一个人用的是方法是一次读一个字节,然后判断字节是否为0,如果不是0就写入到输入出文件中去,如果是0就不写入到文件中去, 我个人觉得这个方法并不靠谱,因为实际文件中很有可能存在一大段字节中有不少字节为0的情况,所以这种方式的cp未免太过简单.之后又看到一个觉得靠谱的思路,也就是我下面要介绍的思路.</p>
 <ul>
 <li><p>先说下思路,主要利用的是新版本下linux支持的lseek()函数的特殊用法,所以不好意思啦,mac os估计是无法使用我的代码了.</p>
 <blockquote>
@@ -480,7 +482,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

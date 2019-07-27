@@ -81,18 +81,18 @@
 
 
 
-<meta name="description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难">
+<meta name="description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux下多线程死锁调试">
 <meta property="og:url" content="http://yoursite.com/2019/04/22/linux下多线程死锁调试/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难">
+<meta property="og:description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-faf75e62768227fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux下多线程死锁调试">
-<meta name="twitter:description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难">
+<meta name="twitter:description" content="多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1 获得死锁程序崩溃后的core文件 这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-faf75e62768227fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -345,7 +345,9 @@
       
 
       
-        <p>多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1</p>
+        <meta name="referrer" content="no-referrer">
+
+<p>多线程编程是一直多比较难的一个部分, 今天我就来介绍一下在Linux下调试c++程序死锁的一个简单方式,环境是Ubuntu16.04, gcc版本是4.9.3,gdb版本是7.11.1</p>
 <h4 id="获得死锁程序崩溃后的core文件"><a href="#获得死锁程序崩溃后的core文件" class="headerlink" title="获得死锁程序崩溃后的core文件"></a>获得死锁程序崩溃后的core文件</h4><ol>
 <li>这个部分比较重要, 因为很多时候死锁并不是每次都会出现的, 因此我们需要在遇到死锁的时候尽可能的保存现场, 方便我们分析,这里我们就需要获得死锁程序崩溃后的core文件,否则这次难得的死锁出现机会就错失了.</li>
 <li>先介绍下core文件, core文件就是core dump生成的文件,core是内存的意思,dump是丢出来的意思,在我们开发unix程序的时候,相信大家肯定都遇到过Segmentation fault (core dumped)这种情况, 这个时候一般就会生成core文件,当一个进程运行过程中异常退出,操作系统会把当前进程的内存状态储存在一个core文件内,也就是core dumped产生的文件,这个就是我们在调试的时候需要用到的东西. 不过有些同学可能奇怪, 死锁的程序不是不会退出吗, 那么怎么产生core dump文件呢, 这个问题我们后来来介绍</li>
@@ -515,7 +517,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

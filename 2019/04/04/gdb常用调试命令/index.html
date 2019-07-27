@@ -81,17 +81,17 @@
 
 
 
-<meta name="description" content="最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看. 1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上-g选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg: gcc -g -o sample sample.c  2">
+<meta name="description" content="最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看. 1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上-g选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg: gcc -g -o sample sample.c">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gdb常用调试命令">
 <meta property="og:url" content="http://yoursite.com/2019/04/04/gdb常用调试命令/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看. 1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上-g选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg: gcc -g -o sample sample.c  2">
+<meta property="og:description" content="最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看. 1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上-g选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg: gcc -g -o sample sample.c">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-14T10:39:00.000Z">
+<meta property="og:updated_time" content="2019-07-27T09:17:02.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="gdb常用调试命令">
-<meta name="twitter:description" content="最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看. 1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上-g选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg: gcc -g -o sample sample.c  2">
+<meta name="twitter:description" content="最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看. 1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上-g选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg: gcc -g -o sample sample.c">
 
 
 
@@ -343,7 +343,9 @@
       
 
       
-        <p> 最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看.</p>
+        <meta name="referrer" content="no-referrer">
+
+<p> 最近看完csapp开始看apue,有时候跟着书上的代码敲着敲着也会产生一些疑惑,这个时候我就需要用到gdb来辅助我对代码的理解,这里总结一下gdb的常用指令,加深记忆并且方便以后来看.</p>
 <h4 id="1-首先我们需要注意-在用gcc编译产生可执行文件时-我们需要加上-g选项-这样得到的可执行文件才能用gdb调试-否则我们是无法用gdb调试的哦-eg"><a href="#1-首先我们需要注意-在用gcc编译产生可执行文件时-我们需要加上-g选项-这样得到的可执行文件才能用gdb调试-否则我们是无法用gdb调试的哦-eg" class="headerlink" title="1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上-g选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg:"></a>1. 首先我们需要注意,在用gcc编译产生可执行文件时,我们需要加上<strong>-g</strong>选项,这样得到的可执行文件才能用gdb调试,否则我们是无法用gdb调试的哦.eg:</h4><blockquote>
 <p>gcc -g -o sample sample.c</p>
 </blockquote>
@@ -486,7 +488,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
