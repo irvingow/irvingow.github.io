@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A-start算法总结">
+<meta property="og:url" content="http://yoursite.com/2019/07/27/A-start算法总结/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-fa6f268c3f136da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-42e533faa38150f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-fab9d0f0d4d53d89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-b8986ac75fa61bc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-a8d9b27100f2e054.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-56e82cfe520d9e38.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-07-27T08:10:17.955Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A-start算法总结">
+<meta name="twitter:description" content="准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:A星算法详解, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路. 问题介绍先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-fa6f268c3f136da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/27/A-start算法总结/">
+
+
+
+
+
+  <title>A-start算法总结 | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/27/A-start算法总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">A-start算法总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-27T15:50:29+08:00">
+                2019-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p> 准备面试,重温了一下之前做竞赛用到的一些算法,先来总结一下A星算法吧,这个算法应该是解决寻路问题中最常用的算法之一了.这里我参考了csdn的一篇博客,原文地址如下:<a href="https://blog.csdn.net/hitwhylz/article/details/23089415" target="_blank" rel="noopener">A星算法详解</a>, 下面是我的一些总结与理解,方便加深自己的印象同时也捋清文章的思路.</p>
+<h4 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h4><p>先看问题,如下图所示,问题是现在假设有人要从绿点(假设为A)走到红点(假设为B),但是中间有一堵墙(蓝色部分),这个人希望找到从绿点走到红点的最短路径.<br><img src="https://upload-images.jianshu.io/upload_images/5550522-fa6f268c3f136da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>这里我们为了简化问题,将地图划分为若干个方块,这个人每次只能移动到相邻的格子(也就是当前位置的8邻域).</p>
+<h4 id="开始搜索"><a href="#开始搜索" class="headerlink" title="开始搜索"></a>开始搜索</h4><p>现在我们开始搜索最短路径:</p>
+<ol>
+<li>从起点A开始,并把它加入到一个open list中去, 这个open list目前只有A一个节点, open list中节点就是我们可能需要check的节点, 注意的是open list中的节点只是备选项,也就是说路径的节点是从中选出来的,但是大部分的节点可能是不在路径上的.</li>
+<li>接下来,查找与起点A相邻的方格(忽略不能走的方格,在本例里面就是墙壁格子),把可到达的节点都加入到open list中去,把起点A设为这些方格的父节点,为什么要设置父节点呢,很简单,用于回溯路径的,我们已经到达终点时,我们一层一层向上找父节点,直到回到起点,这个时候最短路径也就找到了.</li>
+<li>将A从open list中移除,加入到close list中去,close list里面是我们不用关注的节点的集合<br>下面是我们执行完这一步搜索之后的图片,深绿色的方格为起点，它的外框是亮蓝色，表示该方格被加入到了 close list 。与它相邻的黑色方格是需要被检查的，他们的外框是亮绿色。每个黑方格都有一个灰色的指针指向他们的父节点，这里是起点A.<br><img src="https://upload-images.jianshu.io/upload_images/5550522-42e533faa38150f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></li>
+</ol>
+<h4 id="选择下一步"><a href="#选择下一步" class="headerlink" title="选择下一步"></a>选择下一步</h4><p>  现在我们需要从open list中选择下一步要去的方格,这个时候我们应该选择哪一个节点呢, 答案是根据open list中节点的F值大小来选,选择具有最小F值的那个节点,那么F值应该怎么算呢,下面给出计算方式:<br>  F = G + H. 这里G=从起点A移动到指定方格的移动代价,H=从指定方格到达终点B的估算代价,这个H实际上肯定是猜出来的,如果我们已经知道了每个方格到B的实际代价,那何必要这个算法呢(笑),所以这个H是一个估计值,那么既然是估算值,我们应该如何估算呢,这里比较常用的估算方式是曼哈顿距离,不过值得注意的是曼哈顿距离的计算是不能斜着走的,也就是说只能向上向下向左向右走,斜着走是不行的,另外很重要的一点是计算曼哈顿距离时,我们不考虑障碍物,也就是在计算曼哈顿距离时,我们假设我们拥有超能力可以直接穿越障碍物.<br>  这里我们假设计算G的时候上下左右走一个的距离是10,斜着走的距离是14,实际上也就是10*根号2,然后近似为14,这里是为了方便计算,我们将计算出来的G和H相加便得到F,第一次计算出来的结果如下图所示,方格的左上角是F,左下角是G,右下角是H.<br>  <img src="https://upload-images.jianshu.io/upload_images/5550522-fab9d0f0d4d53d89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h4 id="选择下一步的格子"><a href="#选择下一步的格子" class="headerlink" title="选择下一步的格子"></a>选择下一步的格子</h4><p>我们从open list中选择F值最小的节点,然后对该节点进行以下操作:</p>
+<p>  a. 把它从open list中取出来,加入close list中去<br>  b. 检查所有与它相邻的方格,忽略已经在close list或者是障碍物的方格,如果方格不在open list中,那么把方格加入到open list中去.<br>  c. 把我们选定的方格设定为这些新加入方格的父亲.<br>  d. 如果某个相邻方格(假设为X)已经在open list中(也就是说从当前节点的父节点也能够到达这个方格),那么检查这条路径是否是最优的,也就说check从当前方格到达X是否有更小的G值,如果没有的话,就不进行任何操作.相反如果G值更小,则把X的父亲节点设为当前方格,然后重新计算X的F值.<br>带入我们这个例子里面,流程大概如下:<br><img src="https://upload-images.jianshu.io/upload_images/5550522-b8986ac75fa61bc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>根据上一步的结果,我们选择F=40的节点作为当前节点,当前节点被加入到close list中,目前close list中的两个节点用蓝线打亮,open list目前7个节点,用绿色框表出,现在我们检查当前节点的相邻节点,根据上面所说的规则,障碍物节点不考虑,已经处于close list的节点也不考虑,因此我们只考虑剩下的4个节点.<br>剩下的四个节点都已经处于open list中,因此我们需要检查从当前节点到达那里的路径是否会更好,使用G值来判定,先看看上面的方格,如果我们通过当前方格来到达上面的方格,那么G值应该是10+10=20,但是目前上面这个节点的G值是14,显然20&gt;14,所以我们不做任何改变.<br>检查其他四个节点,发现都不需要改变,因此我们结束这一步,进入下一步</p>
+<h4 id="继续下一步"><a href="#继续下一步" class="headerlink" title="继续下一步"></a>继续下一步</h4><p>再次遍历我们的open list,这时open list里面只有7个节点,我们需要继续选择F值最小的那个,但是这个时候有两个F值最小的节点,这个时候没有规律要求我们要选哪个节点,所以我们随便选择一个节点,假设我们选择下面的那个节点,结果如下所示<br><img src="https://upload-images.jianshu.io/upload_images/5550522-a8d9b27100f2e054.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>这个时候需要我们稍微注意点的是,我们忽略了右下角的那个格子,这个能不能到达取决于题目规则,假设我们这里是不能穿越障碍物边角叭,也就是不能斜着到障碍物下面的格子.</p>
+<h4 id="然后我们重复执行前面的操作-直到终点也到达open-list中-最后结果图大致如下所示"><a href="#然后我们重复执行前面的操作-直到终点也到达open-list中-最后结果图大致如下所示" class="headerlink" title="然后我们重复执行前面的操作,直到终点也到达open list中,最后结果图大致如下所示:"></a>然后我们重复执行前面的操作,直到终点也到达open list中,最后结果图大致如下所示:</h4><p><img src="https://upload-images.jianshu.io/upload_images/5550522-56e82cfe520d9e38.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>个人感觉这个图的第三个节点选择的是右上方的节点,并不是我们在前面写的右下方的节点,因为如果选择的是右下的节点,那么找出来的路是会走上面的路而不是下面的路.这个应该是作者从其他地方摘录的时候没注意的一点.<br>这个时候,我们从图上可以很明显的看出从终点回到起点的顺序,这就是我们使用父节点的原因.</p>
+<h4 id="总结步骤"><a href="#总结步骤" class="headerlink" title="总结步骤"></a>总结步骤</h4><ul>
+<li>把起点加入open list</li>
+<li>重复以下过程:<ol>
+<li>遍历open list,查找F值最小的节点,把它作为当前要处理的节点.</li>
+<li>把这个节点加入close list</li>
+<li>对当前节点的相邻8个节点,如果是不可达的或者在close list中,就忽略它,如果不是的话,那么分两种情况,如果这个节点不在open list中,那么将这个节点加入open list中,并且把当前节点设为它的父节点,计算该节点的F,G和H值.如果在open list的话,检查从当前节点到那个节点是否是更好的路径,用G值作为参考,更小的G值代表更好的路径.如果确实从当前节点到那个节点是更好的路径,那么注意要将那个节点的父节点改为当前节点,并且重新计算其G和F值</li>
+</ol>
+</li>
+<li>如果我们终点已经找到,或者open list为空,算法停止.</li>
+<li>保存路径,从终点开始,每个方格沿着父节点移动直至起点,这就是最短路径.</li>
+</ul>
+<h4 id="额外的话"><a href="#额外的话" class="headerlink" title="额外的话"></a>额外的话</h4><p>值得一提的是A星算法中最重要的应该是open list的维护了,因为我们需要寻找open list中的具有最小F值的节点,因此我们可以根据F值对open list进行排序,最常用的应该是最小堆,不过需要注意的是,如果是根据F值排序的话,在步骤的第三步,如果F值发生改变的话,那么就对open list进行重新排序了.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/24/再探线程安全的单例模式实现/" rel="next" title="再探线程安全的单例模式实现">
+                <i class="fa fa-chevron-left"></i> 再探线程安全的单例模式实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/27/字符串匹配KMP算法/" rel="prev" title="字符串匹配KMP算法">
+                字符串匹配KMP算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题介绍"><span class="nav-number">1.</span> <span class="nav-text">问题介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开始搜索"><span class="nav-number">2.</span> <span class="nav-text">开始搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择下一步"><span class="nav-number">3.</span> <span class="nav-text">选择下一步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择下一步的格子"><span class="nav-number">4.</span> <span class="nav-text">选择下一步的格子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#继续下一步"><span class="nav-number">5.</span> <span class="nav-text">继续下一步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#然后我们重复执行前面的操作-直到终点也到达open-list中-最后结果图大致如下所示"><span class="nav-number">6.</span> <span class="nav-text">然后我们重复执行前面的操作,直到终点也到达open list中,最后结果图大致如下所示:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结步骤"><span class="nav-number">7.</span> <span class="nav-text">总结步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#额外的话"><span class="nav-number">8.</span> <span class="nav-text">额外的话</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
