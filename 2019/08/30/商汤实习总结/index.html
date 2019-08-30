@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言大四保研之后没啥事情，同时女朋友在上海就顺便跑到上海实习了，在商汤从3月份开始实习，到8月20日离开，实习了也有接近5个多月，这次实习的时间很长，感觉收获很多，感触也很多，感觉还是写一篇博客来记录一下这5个多月来的经历。 实习业务简单介绍实习所在这个部门做的主要是对作为对底层算法sdk的封装，对视频进行分析获得一些和指定目标（目前主要是人）相关的信息，然后根据项目方的要求来完成逻辑开发，分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="商汤实习总结">
+<meta property="og:url" content="http://yoursite.com/2019/08/30/商汤实习总结/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="前言大四保研之后没啥事情，同时女朋友在上海就顺便跑到上海实习了，在商汤从3月份开始实习，到8月20日离开，实习了也有接近5个多月，这次实习的时间很长，感觉收获很多，感触也很多，感觉还是写一篇博客来记录一下这5个多月来的经历。 实习业务简单介绍实习所在这个部门做的主要是对作为对底层算法sdk的封装，对视频进行分析获得一些和指定目标（目前主要是人）相关的信息，然后根据项目方的要求来完成逻辑开发，分">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-08-30T09:17:50.506Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="商汤实习总结">
+<meta name="twitter:description" content="前言大四保研之后没啥事情，同时女朋友在上海就顺便跑到上海实习了，在商汤从3月份开始实习，到8月20日离开，实习了也有接近5个多月，这次实习的时间很长，感觉收获很多，感触也很多，感觉还是写一篇博客来记录一下这5个多月来的经历。 实习业务简单介绍实习所在这个部门做的主要是对作为对底层算法sdk的封装，对视频进行分析获得一些和指定目标（目前主要是人）相关的信息，然后根据项目方的要求来完成逻辑开发，分">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/30/商汤实习总结/">
+
+
+
+
+
+  <title>商汤实习总结 | 眼前的code</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/30/商汤实习总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">商汤实习总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-30T15:20:21+08:00">
+                2019-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>大四保研之后没啥事情，同时女朋友在上海就顺便跑到上海实习了，在商汤从3月份开始实习，到8月20日离开，实习了也有接近5个多月，这次实习的时间很长，感觉收获很多，感触也很多，感觉还是写一篇博客来记录一下这5个多月来的经历。</p>
+<h4 id="实习业务简单介绍"><a href="#实习业务简单介绍" class="headerlink" title="实习业务简单介绍"></a>实习业务简单介绍</h4><p>实习所在这个部门做的主要是对作为对底层算法sdk的封装，对视频进行分析获得一些和指定目标（目前主要是人）相关的信息，然后根据项目方的要求来完成逻辑开发，分析出来结果之后通过kafka发消息给应用层，应用层根据收到的信息进行展示或者选择报警等等。整个项目来说相对还是比较复杂的，简单来说就是c++这一快做的是根据客户现场的摄像头获得实时数据，通过调用底层sdk对视频流进行分析，然后获得结果。</p>
+<h4 id="分布式简单介绍"><a href="#分布式简单介绍" class="headerlink" title="分布式简单介绍"></a>分布式简单介绍</h4><p>我记得刚去的时候mentor让我做的是相对比较简单的两个小项目，作为我们未来将要使用的一个库，第一个是zookeeper的库，主要是提供服务注册和查询服务，这一块在不需要深入了解原理的情况下并不麻烦，很快就能实现，zookeeper服务器上注册的节点我个人觉得有点像一个文件系统，注册的时候给出的参数也是类似于linux系统下的文件路径，不过相对来说，zookeeper注册的节点具有一些权限或者不同的属性，比如临时的或者永久，临时的节点是不能创建子节点的，权限的话我当时也没有深入研究，不过好像是zookeeper的一个重要的一环，ACL那一块。个人感觉zookeeper是一个非常成功的开源库，使用起来非常方便，如果不需要深入原理的话，看看例子便很快就能上手，而且zookeeper的开发者还提供来一些脚本来辅助我们，我记得一个脚本可以连接到zookeeper服务器，然后查看zookeeper上注册的节点，很方便。易用性很强。</p>
+<p>第二个是kafka服务，这一块我在接触前是抱着很敬畏的态度的，因为早就听过其大名，很多大公司也是依赖kafka提供消息服务，可惜的是自己需要做的反而相对简单，只需要了解一下kafka的一些概念即可，同时参考了一下网上的一些博客，很快就搞定了生产消息和发送消息的接口，不过后来遇到一个小问题，项目上为了保证消息不丢失，希望完成一个生产消息的同步接口，这个问题当时还算是有点麻烦的，不过后来想想网络协议，虽然kafka提供的接口是异步的，消息是否发送成功需要等待回调函数，但是等待回调函数肯定也是有个超时时间的，因此就找到了kafka控制底层发送消息的超时时间，将超时时间修改的稍微短一点（因为我们的项目基本都是处于内网环境，所以基本不需要考虑超时时间很长的情况），然后等待回调函数被调用，具体参考我之前写的博客<a href="https://irvingow.github.io/2019/03/29/libkafka%E5%B0%81%E8%A3%85%E7%94%9F%E4%BA%A7%E8%80%85%E5%90%8C%E6%AD%A5%E6%8E%A5%E5%8F%A3/" target="_blank" rel="noopener">librdkafka封装生产者同步接口</a></p>
+<p>这里不做过多介绍，因为确实分布式这一块不是我们业务的核心，所以也没有深入研究过，但是其实分布式是一个非常值得深入研究的领域，但是如果仅仅是使用的话，目前开源市场上能用的库已经基本完全够我们使用了，分布式的话日后可以继续研究一番。</p>
+<h4 id="视频编解码"><a href="#视频编解码" class="headerlink" title="视频编解码"></a>视频编解码</h4><p>实习后来做的事情是了解一下我们那边的一个基础库，具有编码解码渲染转发的功能，这一块说实话印象不是很深，唯一印象比较深刻的是这一块一直都在和ffmpeg打交道，还知道了一个业界名人雷神，这个人应该是研究ffmpeg中最出名的一个了，csdn上他的博客访问量巨大，不过好像后来了结尘世缘，还是怪可惜的。不过虽然他很出名，博客写的也很好，但是他写的也有点老了，ffmpeg的最新版本有些接口已经被废弃，所以参考雷神的博客也得小心点，并不是都能拿来就用的。当时还做了加水印那一块，不过这一块我觉得做的很没啥意义，因为我后来发现，项目上选择了使用opencv，因为opencv实在好用多了，晕了，我自己用ffmpeg加水印，网上资料不多而且很多过时的，写了好几天才写好，反而用opencv的话只需要一句话就好了，实在是气人。</p>
+<h4 id="业务"><a href="#业务" class="headerlink" title="业务"></a>业务</h4><p>再后来基本熟悉了这边的东西，开始做和业务相关的事情，业务的话人理解起来很自然，但是用计算机去实现反而就比较复杂，当时主要根据需要做了好几种人异常行为的检测，这里就不具体透露，主要是逻辑上的东西，不和技术强相关，不过在开发这一阶段，我非常明白了设计模式的重要性，代码架构设计的好后期修改起来，升级都很方便，如果代码结构设计的不好，后期有需要再改的话代码就会一团糟，这里我简单说几点我自己认为重要的，第一点就是复用逻辑上具有强一致性的代码，这里方便修改，就算逻辑改了只需要改一个函数就好，如果不复用各自为战的话很容易出现改了一个忘了另一个的情况，容易出现bug，第二点是写函数的时候功能最好小一点比较好，举个简单的例子来看，如果我们需要分析很多帧视频，比如一个batch是10帧，但是写分析函数的时候，最好写一个分析一帧的函数进行分析，必须的数据通过函数引用参数来传递，第三点是考虑到未来的可拓展性，代码如果只是为了图方便而写的功能非常专一，后来修改起来就会很麻烦，因为需要修改的地方很多，但是如果一开始就考虑好了，后期拓展起来就会方便多了</p>
+<h4 id="架构升级"><a href="#架构升级" class="headerlink" title="架构升级"></a>架构升级</h4><p>后来5月底到6月底，我直接回学校去搞毕业的事情了，这个月项目组那边为了解决一些之前架构上存在的问题，对项目架构进行了升级，使用了更合理的方式来提供服务，这一块我也不具体说，但是涉及到的东西还是蛮多的，等我回去之后先测试了一下一些解码方案的可行性，使用多线程进行优化，因为这次使用的是公司的sdk所以相对来说用法简单点，主要是使用多线程对视频解码效果进行优化，取得了还不错的效果。后来做了一个统计人跨线的demo，这个相对来说比较简单，用好sdk然后逻辑上捋清楚就能够搞定，反而里面涉及到的一些数学算法自己都有点忘光光了，说来惭愧，不过做出来之后效果反而出奇的好，产品那边直接拿过去给客户演示，似乎效果也不错。</p>
+<p>再后来就是负责一个升级后的模块的开发了，这一块相对要复杂一点，涉及到代码的重构，好在之前的代码结构不算差，也算是很快搞定了这一部分。反而后来写完代码测试的时候发现一个特别奇怪的问题，内存好像有泄漏的情况出现，当时这个问题可查了我好久，一直以为是内存泄漏，但是后来发现是因为发送的事件里面包含图片内容，但是发送的事件被消费者消费的很慢（因为我不知道为撒之前在消费者里面加了一个sleep晕了），然后导致事件不断累计，导致图片的内存一直不被释放，出现了问题，这个问题本质上是逻辑上的问题，但是这种问题又很可能让你觉得是c++的内存泄漏导致的），查问题的方向不明确导致好久才解决这个问题，实在是头大。</p>
+<p>8月份的时候另外一个实习生离职了，mentor就让我把他没做完的也做了，他做的主要是对于视频帧的渲染，因为处于性能考虑，当时我们分析的时候是跳帧进行分析的，但是渲染的时候肯定是每一帧都要渲染上信息，否则播放出来的视频效果就很差，当时还考虑了很久要怎么把渲染的结果叠加到被跳过的帧上面去，想过比较复杂的方式是找最邻近的帧，但是这样的话实际上渲染实现起来很麻烦，因为一部分渲染的帧依赖于还没分析的帧的分析结果，这种方式编程实现比较复杂，而且由于等待分析结果，所以转出去的视频可能也比较卡顿。然后就打算试试比较简单的方式，就是保存最新的分析结果，然后直接将这个结果叠加到渲染的帧上，这个方法虽然相对比较暴力，但是实现起来效果却不错，因此后来也没有对这一块进行优化了，对于几个分析服务都使用了这种方式，这告诉我们有时候需要测试才能知道效果，盲目猜的话有可能不一定靠谱，所以遇到问题最好先查资料然后动手做，这样效果最好。</p>
+<p>最后几天做的基本是联调以及测试服务稳定性的事情了，相对来说，遇到了一些死锁的问题，主要是由于渲染那边需要等待一些分析结果导致的，后来重新设计了一下之后就解决了这个问题，总的来说还是没啥问题的，后来测试了没啥太大问题我正好也到了离职的时候就办完交接走了。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>这次的实习时间很长，也学到了很多东西，呆在商汤的感觉也很舒服，实在是感激能有这次机会。在那边熟悉了一些开发的流程，熟练了一下git的操作，最主要的是熟悉了在Linux下开发，熟练掌握各种Linux的常用命令，还有一些c++程序的调试方法，更加熟悉gdb等等，这里实习经历还是让人成长很多的，短短的日子很快就过去了，离开了上海，要回学校读研究生了，期待下次实习！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/09/一个简单的多线程下的LRU-Cache实现/" rel="next" title="一个简单的多线程下的LRU_Cache实现">
+                <i class="fa fa-chevron-left"></i> 一个简单的多线程下的LRU_Cache实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实习业务简单介绍"><span class="nav-number">2.</span> <span class="nav-text">实习业务简单介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式简单介绍"><span class="nav-number">3.</span> <span class="nav-text">分布式简单介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#视频编解码"><span class="nav-number">4.</span> <span class="nav-text">视频编解码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#业务"><span class="nav-number">5.</span> <span class="nav-text">业务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#架构升级"><span class="nav-number">6.</span> <span class="nav-text">架构升级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
