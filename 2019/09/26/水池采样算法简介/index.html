@@ -81,26 +81,17 @@
 
 
 
-<meta name="description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
+<meta name="description" content="前言今天刷leetcode看到一道题，简单介绍下，就是说给定一个未知长度的链表的头节点，让你随机返回其中一个节点的值，这个题目暴力一点的做法是先遍历一遍链表，知道长度之后再进行操作，不过这个办法显然不是best practice，下面我们来介绍下更好的办法，也就是今天我想介绍的一个算法。 简单情景这里的就按照题目给的要求来做吧，先给定结论，由于我们未知链表的长度，所以遍历的时候保存当前已经遍历">
 <meta property="og:type" content="article">
-<meta property="og:title" content="字符串匹配KMP算法">
-<meta property="og:url" content="http://yoursite.com/2019/07/27/字符串匹配KMP算法/index.html">
+<meta property="og:title" content="水池采样算法简介">
+<meta property="og:url" content="http://yoursite.com/2019/09/26/水池采样算法简介/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
+<meta property="og:description" content="前言今天刷leetcode看到一道题，简单介绍下，就是说给定一个未知长度的链表的头节点，让你随机返回其中一个节点的值，这个题目暴力一点的做法是先遍历一遍链表，知道长度之后再进行操作，不过这个办法显然不是best practice，下面我们来介绍下更好的办法，也就是今天我想介绍的一个算法。 简单情景这里的就按照题目给的要求来做吧，先给定结论，由于我们未知链表的长度，所以遍历的时候保存当前已经遍历">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050104.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050105.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050107.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050110.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050113.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png">
-<meta property="og:updated_time" content="2019-07-27T09:15:23.336Z">
+<meta property="og:updated_time" content="2019-09-26T03:39:19.206Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="字符串匹配KMP算法">
-<meta name="twitter:description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
-<meta name="twitter:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png">
+<meta name="twitter:title" content="水池采样算法简介">
+<meta name="twitter:description" content="前言今天刷leetcode看到一道题，简单介绍下，就是说给定一个未知长度的链表的头节点，让你随机返回其中一个节点的值，这个题目暴力一点的做法是先遍历一遍链表，知道长度之后再进行操作，不过这个办法显然不是best practice，下面我们来介绍下更好的办法，也就是今天我想介绍的一个算法。 简单情景这里的就按照题目给的要求来做吧，先给定结论，由于我们未知链表的长度，所以遍历的时候保存当前已经遍历">
 
 
 
@@ -130,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/07/27/字符串匹配KMP算法/">
+  <link rel="canonical" href="http://yoursite.com/2019/09/26/水池采样算法简介/">
 
 
 
 
 
-  <title>字符串匹配KMP算法 | 眼前的code</title>
+  <title>水池采样算法简介 | 眼前的code</title>
   
 
 
@@ -263,7 +254,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/27/字符串匹配KMP算法/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/26/水池采样算法简介/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="irving lwj">
@@ -280,7 +271,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">字符串匹配KMP算法</h1>
+          <h1 class="post-title" itemprop="name headline">水池采样算法简介</h1>
         
 
         <div class="post-meta">
@@ -292,8 +283,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-27T16:20:31+08:00">
-                2019-07-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-26T11:09:18+08:00">
+                2019-09-26
               </time>
             
 
@@ -354,11 +345,19 @@
       
         <meta name="referrer" content="no-referrer">
 
-<p> 好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了.</p>
-<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于搬运一下吧,顺便加深一下自己的印象,免得看过就忘.这是原博客地址:<a href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html" title="字符串匹配的KMP算法-阮一峰日志" target="_blank" rel="noopener">字符串匹配的KMP算法-阮一峰日志</a></p>
-<h4 id="普通的字符串匹配算法"><a href="#普通的字符串匹配算法" class="headerlink" title="普通的字符串匹配算法"></a>普通的字符串匹配算法</h4><p>普通的字符串匹配算法是明显低效的, 由于每一次匹配失败都会导致回滚到上次匹配成功的第一个字母的后面一个字母, 因此是浪费了时间的, 这样说可能不容易理解, 举个例子来看, 比如现在有字符串AAAAHAAAHAHAHA, 我们想找找HAHAHA是否存在与前面的字符串中, 当我们比较到第五个字符串的时候, 是匹配的,即H, 然后匹配下一个字符A, 发现也是匹配的, 继续, 发现原字符串的下一个字符是A, 但是我们期望的是H, 因此匹配失败, 这个时候普通的匹配算法会从第六个字符开始匹配, 也就是A, 这个时候肯定是匹配失败的, 实际上我们直观上来看就是很笨的行为, 我不太好形容, 但是因为我们已经成功匹配了2个字符, 即我们已经知道了原字符串中H下一个字符是A了, 我们想要匹配的字符第一个字符是H, 所以这样匹配明显是会失败的, 也就是说这点会导致我们的时间复杂度增加, 这也就是KMP算法改进的地方吧.</p>
-<h4 id="KMP算法"><a href="#KMP算法" class="headerlink" title="KMP算法"></a>KMP算法</h4><p>我将主要流程贴点图吧, 具体就不细说, 其实理解起来不太难<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png" alt=" "><br>  下一步<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050104.png" alt=" "><br>  直到匹配到第一个字符<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050105.png" alt=" "><br>  向后匹配<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050107.png" alt="a"><br>  找到第一个不匹配的,需要重新开始匹配,这个时候就像我们在上面说的, 肯定不是直接向后移动1位开始匹配, 但是需要移动多少位呢, 这就是KMP算法会告诉我们的<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png" alt="a"><br>  先不管这个表怎么算的, 我们先用着, 后面会有解释<br>  计算移动位数的公式是:<br>  移动位数 = 已匹配的字符数 - 对应的部分匹配值<br>  在这里已匹配的字符数是6, 最后一个匹配的字符的部分匹配值查表为2, 故移动位数为4 = 6 - 2<br>  所以我们就跳到第8位开始继续匹配, 如下图<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050110.png" alt="a"><br>  重复上面的过程, 直到找到<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050113.png" alt="a"><br>  如果要继续搜索, 就向后移动7位 = 7 - 0, 注意这里的7位不是字符串的长度, 是通过KMP算法计算出来的.</p>
-<h4 id="部分匹配表的计算"><a href="#部分匹配表的计算" class="headerlink" title="部分匹配表的计算"></a>部分匹配表的计算</h4><p>首先，要了解两个概念：”前缀”和”后缀”。 “前缀”指除了最后一个字符以外，一个字符串的全部头部组合；”后缀”指除了第一个字符以外，一个字符串的全部尾部组合。<br>“部分匹配值”就是”前缀”和”后缀”的最长的共有元素的长度。以”ABCDABD”为例:<br>－　“A”的前缀和后缀都为空集，共有元素的长度为0；<br>－　“AB”的前缀为[A]，后缀为[B]，共有元素的长度为0；<br>－　“ABC”的前缀为[A, AB]，后缀为[BC, C]，共有元素的长度0；<br>－　“ABCD”的前缀为[A, AB, ABC]，后缀为[BCD, CD, D]，共有元素的长度为0；<br>－　“ABCDA”的前缀为[A, AB, ABC, ABCD]，后缀为[BCDA, CDA, DA, A]，共有元素为”A”，长度为1；<br>－　“ABCDAB”的前缀为[A, AB, ABC, ABCD, ABCDA]，后缀为[BCDAB, CDAB, DAB, AB, B]，共有元素为”AB”，长度为2；<br>－　“ABCDABD”的前缀为[A, AB, ABC, ABCD, ABCDA, ABCDAB]，后缀为[BCDABD, CDABD, DABD, ABD, BD, D]，共有元素的长度为0。<br>上面也就是部分匹配表的由来:<br><img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png" alt=" "><br>部分匹配的实质就是因为字符串内部的重复, 很好理解, 相信大家稍微动下脑筋都能看出来.</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>今天刷leetcode看到一道题，简单介绍下，就是说给定一个未知长度的链表的头节点，让你随机返回其中一个节点的值，这个题目暴力一点的做法是先遍历一遍链表，知道长度之后再进行操作，不过这个办法显然不是best practice，下面我们来介绍下更好的办法，也就是今天我想介绍的一个算法。</p>
+<h4 id="简单情景"><a href="#简单情景" class="headerlink" title="简单情景"></a>简单情景</h4><p>这里的就按照题目给的要求来做吧，先给定结论，由于我们未知链表的长度，所以遍历的时候保存当前已经遍历的长度，记为n，那么对于链表中的第n个节点，我们选中这个节点的概率只要是1/n就可以保证对于未知长度的链表，能够以相同的概率返回链表中的任意一个节点。</p>
+<h4 id="证明"><a href="#证明" class="headerlink" title="证明"></a>证明</h4><p>这里的证明我就用数学归纳法来进行证明：（忘了数学归纳法的自行百度哈，这个是高中数学基础）</p>
+<pre><code>1. 显然当n=1时，1/1=1，也就是说第一个节点是肯定会被选中，这个是没毛病的。
+
+2. 假设当链表的长度为n的时候，每个节点被选中的概率是1/n，那么现在我们需要证明当链表长度为n+1时，我们以1/（n+1）的概率选中最后一个节点的值，则每个节点被选中的概率都是1/（n+1），这个也不难证明，当链表长度为n+1时，前面n个节点中的任意一个节点被选中的概率为（1/n）*（n/（n+1））= 1/（n+1），这个也不难理解，只有当这个节点在之前被选中，即概率为1/n，且第n+1个节点没有被选中，即概率为n/（n+1），这个节点才会被选中，所以概率就是1/（n+1），证明完毕。</code></pre><h4 id="推广情况"><a href="#推广情况" class="headerlink" title="推广情况"></a>推广情况</h4><p>假设链表长度未知，这次我们需要随机选择链表中的k个数字，这个根据前面的结论，猜都能猜到，对于长度为n（n&gt;=k）的链表，最后一个节点被选中的概率为k/n就能保证从链表中随机选择出k个节点。</p>
+<h4 id="推广证明"><a href="#推广证明" class="headerlink" title="推广证明"></a>推广证明</h4><p>这里的证明也是数学归纳法，说到这个多说一句，感觉数学里面的证明反证法和数学归纳法在后期用的越来越多，实在是好用</p>
+<pre><code>1. 显然当n=k时，前面k个节点都会被选中，这个也没毛病
+
+2. 假设当链表长度为n的时候，每个节点被选中的概率是k/n，那么我们现在需要证明当链表长度为n+1时，我们以k/（n+1）的概率选中最后一个节点，那么每个节点被选中的概率都是k/（n+1），这个证明也不复杂，不过要注意考虑全面，不要漏考虑情况，否则会导致计算出来的概率不对，下面我从任一节点被选中和未被选中两个角度，证明结论。
+
+    * 计算前面n个节点任意一个节点被选中的概率，这个结果会在什么情况下产生呢，首先肯定要求这个节点在之前就是被选中的节点，否则最后肯定不是被选中的节点，所以k/n的概率是大前提，进一步考虑，当最后一个节点被选中需要随机替换前面k个节点中一个的时候，这个节点肯定不能是被选中的，因此这种情况的概率是k/（n+1）*（k-1）/k，再考虑一下，如果最后一个节点没有被选中，那么这个节点最后是不是也是被选中了，这种情况的概率是1-（k/（n+1）），综上，一个节点被选中的概率是k/n * {(k/(n+1) * (k-1)/k + 1 - (k/(n+1)))} = k/(n+1)
+    * 计算前面n个节点任一节点未被选中的概率，这个结果又会在什么情况下产生呢，有两种情况，第一种情况是在前面n个节点中这个节点就没被选中，一开始就比较背（笑），第二种情况是在前面n个节点中这个节点被选中了，但是第n+1个节点被选中了，且此节点恰好被第n+1个节点替换掉了，这次更背了（笑），这两种情况的概率加在一起的概率就是该节点未被选中的概率，综上，一个节点未被选中的概率为1 - k/n + k/n * k/(n+1) * 1/k = 1 - k/(n+1)</code></pre><h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>到这里算法就介绍的差不多了，这个算法其实并不难理解和证明，但是如果真的是第一次接触的话，其实一下子能想出来的人估计也是凤毛麟角，这里简单介绍一下，数学和计算机结合还是很有意思的。</p>
 
       
     </div>
@@ -383,8 +382,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/27/A-start算法总结/" rel="next" title="A-start算法总结">
-                <i class="fa fa-chevron-left"></i> A-start算法总结
+              <a href="/2019/09/04/epoll使用的简单例子/" rel="next" title="epoll使用的简单例子">
+                <i class="fa fa-chevron-left"></i> epoll使用的简单例子
               </a>
             
           </div>
@@ -392,10 +391,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/27/用数组来表示链表/" rel="prev" title="用数组来表示链表">
-                用数组来表示链表 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -527,7 +522,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#普通的字符串匹配算法"><span class="nav-number">2.</span> <span class="nav-text">普通的字符串匹配算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KMP算法"><span class="nav-number">3.</span> <span class="nav-text">KMP算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部分匹配表的计算"><span class="nav-number">4.</span> <span class="nav-text">部分匹配表的计算</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单情景"><span class="nav-number">2.</span> <span class="nav-text">简单情景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#证明"><span class="nav-number">3.</span> <span class="nav-text">证明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#推广情况"><span class="nav-number">4.</span> <span class="nav-text">推广情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#推广证明"><span class="nav-number">5.</span> <span class="nav-text">推广证明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
