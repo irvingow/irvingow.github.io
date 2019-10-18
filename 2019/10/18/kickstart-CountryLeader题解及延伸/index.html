@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介经一位大佬推荐开始刷google kick start的算法题，遇到一道有趣的算法题，题目属于2017年的practice round的第二题，实际上也是2016年round D problem A，这里先简单介绍下题目： problemA and B are the only two candidates competing in a certain election. We know">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kickstart CountryLeader题解及延伸">
+<meta property="og:url" content="http://yoursite.com/2019/10/18/kickstart-CountryLeader题解及延伸/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="简介经一位大佬推荐开始刷google kick start的算法题，遇到一道有趣的算法题，题目属于2017年的practice round的第二题，实际上也是2016年round D problem A，这里先简单介绍下题目： problemA and B are the only two candidates competing in a certain election. We know">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-10-18T08:13:50.334Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kickstart CountryLeader题解及延伸">
+<meta name="twitter:description" content="简介经一位大佬推荐开始刷google kick start的算法题，遇到一道有趣的算法题，题目属于2017年的practice round的第二题，实际上也是2016年round D problem A，这里先简单介绍下题目： problemA and B are the only two candidates competing in a certain election. We know">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/18/kickstart-CountryLeader题解及延伸/">
+
+
+
+
+
+  <title>kickstart CountryLeader题解及延伸 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/18/kickstart-CountryLeader题解及延伸/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">kickstart CountryLeader题解及延伸</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-18T14:49:28+08:00">
+                2019-10-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>经一位大佬推荐开始刷google kick start的算法题，遇到一道有趣的算法题，题目属于2017年的practice round的第二题，实际上也是2016年round D problem A，这里先简单介绍下题目：</p>
+<h5 id="problem"><a href="#problem" class="headerlink" title="problem"></a>problem</h5><p>A and B are the only two candidates competing in a certain election. We know from polls that exactly N voters support A, and exactly M voters support B. We also know that N is greater than M, so A will win.</p>
+<p>Voters will show up at the polling place one at a time, in an order chosen uniformly at random from all possible (N + M)! orders. After each voter casts their vote, the polling place worker will update the results and note which candidate (if any) is winning so far. (If the votes are tied, neither candidate is considered to be winning.)</p>
+<p>What is the probability that A stays in the lead the entire time — that is, that A will always be winning after every vote?</p>
+<h5 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h5><p>The input starts with one line containing one integer T, which is the number of test cases. Each test case consists of one line with two integers N and M: the numbers of voters supporting A and B, respectively.</p>
+<h5 id="Output"><a href="#Output" class="headerlink" title="Output"></a>Output</h5><p>For each test case, output one line containing Case #x: y, where x is the test case number (starting from 1) and y is the probability that A will always be winning after every vote.</p>
+<p>y will be considered correct if y is within an absolute or relative error of 10-6 of the correct answer. See the FAQ for an explanation of what that means, and what formats of real numbers we accept.</p>
+<h5 id="Limits"><a href="#Limits" class="headerlink" title="Limits"></a>Limits</h5><p>1 ≤ T ≤ 100.</p>
+<h5 id="Small-dataset"><a href="#Small-dataset" class="headerlink" title="Small dataset"></a>Small dataset</h5><p>0 ≤ M &lt; N ≤ 10.</p>
+<h5 id="Large-dataset"><a href="#Large-dataset" class="headerlink" title="Large dataset"></a>Large dataset</h5><p>0 ≤ M &lt; N ≤ 2000.</p>
+<h5 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h5><table>
+<thead>
+<tr>
+<th>输入</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>Case #1: 0.333333</td>
+</tr>
+<tr>
+<td>2  1</td>
+<td>Case #2: 1.000000</td>
+</tr>
+<tr>
+<td>1  0</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>In sample case #1, there are 3 voters. Two of them support A — we will call them A1 and A2 — and one of them supports B. They can come to vote in six possible orders: A1 A2 B, A2 A1 B, A1 B A2, A2 B A1, B A1 A2, B A2 A1. Only the first two of those orders guarantee that Candidate A is winning after every vote. (For example, if the order is A1 B A2, then Candidate A is winning after the first vote but tied after the second vote.) So the answer is 2/6 = 0.333333…</p>
+<p>In sample case #2, there is only 1 voter, and that voter supports A. There is only one possible order of arrival, and A will be winning after the one and only vote.</p>
+<h5 id="简单解释"><a href="#简单解释" class="headerlink" title="简单解释"></a>简单解释</h5><p>其实问题很简单，就是给定N个1和M个0，这N+M个数字中的合法排序方式是要求对于该序列，在任意一个位置，已经出现的1的次数一定大于0出现的次数，求合法序列出现的概率，这个问题我一开始用递归的方式来做，没有想到用数学的方式来做，后来上网搜了一下，看到这个问题实际上算是卡特兰数的一个衍生问题，为什么这么说呢，两个原因，第一个是这个问题首先直接来看并不是卡特兰数，因为要求序列出现1的次数要大于0出现的次数，第二个是因为N和M的关系仅仅是N&gt;M，而没有进一步的关系，更不存在卡特兰数中的相等关系，所以这题我们需要做一些小小的变化来做。</p>
+<h4 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h4><h5 id="问题转化"><a href="#问题转化" class="headerlink" title="问题转化"></a>问题转化</h5><p>首先我们需要做的就是把问题转变成为能套上卡特兰数的形式，我们来考虑下对于一个合法序列，第一位是什么，这个问题很简单，肯定是1，否则首先就不成立，那么接下来只需要考虑除去第一位的的合法序列，这里为了方便大家理解我做一个转化，不妨令0为-1，1不做变化，那么这个时候合法序列就是对于合法序列的任意一个位置，前面所有数字之和必须要大于等于0，其实这个时候问题就已经渐渐向卡特兰数的形式靠拢了，没有听说过卡特兰数的同学这个看看<a href="https://www.cnblogs.com/onioncyc/p/8213374.html" target="_blank" rel="noopener">这个文章</a>, 所以本质上我们就是在求除去第一位的合法序列的数量。</p>
+<h5 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h5><p>这个我们先不考虑第一位有多少种可能性，这个原因我后面再解释，我们先直接计算有多少种除去第一位有多少种合法序列，这个问题有了卡特兰数的基础就好算了，首先考虑总的序列可能性是$$C_{M}^{(N+M-1)}$$，这个问题比较简单，接下来需要考虑的是怎么计算合法序列的数量呢，不过既然我们都计算了总序列的数量，那么大家也都能猜到下一步要计算啥了（笑），我们接下来计算不合法序列的数量，那么不合法序列的数量是多少呢，我们先这样考虑，在一个不合法序列第一次出现不合法的位置，也就是出现的所有数字的和小于0，这个时候我们对前面所有数字的符号进行翻转，此时整个序列就对应到N个1和M-1个-1，每个不合法序列都会被映射到N+M-1个由1和-1组成的序列中，1的数量为N，-1的数量为M-1，所构成的序列，这个问题其实需要简单证明下：<br>    * 正向：每个不合法序列第一个前缀和为-1的位置反转后，形成的序列不同。<br>    * 反向：每个含N个”1”的序列，第一个前缀和为1的位置反转后，形成的不合法序列不同。</p>
+<p>这个其实也不难理解，本质上证明两个映射都是唯一的，所以必然数量是相等的，所以实际上不合法序列的数量就是$$C_{M-1}^{(N+M-1)}$$</p>
+<h5 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h5><p>上面实际上基本上已经搞定了问题的80%，接下来就是20%，上面我们实际上已经计算完了可能序列的数量，就是$C_{M}^{(N+M-1)}$ - $C_{M-1}^{(N+M-1)}$，但是实际上这个结果有个小问题，因为我们没有考虑排列的问题，因为在问题中实际上是需要考虑排列的问题的，因为每个投票的个体是不相同的，所以上面的结果还需要乘以N！* M！，这里其实就能看出来为什么我们之前没有考虑第一位有多少种可能性，因为本质上卡特兰数是不考虑排列的可能性的，所以如果我们在前面考虑了排列反而导致后面的计算公式实际上就是错误的，所以最终结果也差不多出现了，($C_{M}^{(N+M-1)}$ - $C_{M-1}^{(N+M-1)}$)*N!*M! / (N+M)!，经过化简之后其实就是(N-M)/(N+M)，是不是感觉很神奇，这可能就是数学之美吧～</p>
+<h4 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h4><p>这里的延伸主要就是卡特兰数了，这里我不做很多的介绍，网上也有很多博客来介绍的，自己也没有什么特殊的见解就不在这里拾人牙慧了，不过有几个平时比较常见的例子有给定1-n个数字，求合法的出入栈序列；还有求合法的括号序列，也是可以用卡特兰数的思路来解决的；一个稍微不那么直观的例子是，假设已知一个二叉树有n个节点，问有多少种可能的形式，这题其实比较直观的解法是使用递归的方式来求解，不过换个角度来看，可以将遍历二叉树当时添加括号的过程，比如第一次到达一个节点的时候增加一个左括号（，当遍历完这个节点的左子树，再次返回这个节点时就添加一个右括号），此时这个问题就转化为了求合法的括号序列的数量了，这里我不再细说，有兴趣的同学可以去了解了解。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>google kick start还是蛮有意思的，不过难度也是不低，值得我们去学习，另外值得推荐一下编程之美这本书，其实卡特兰数在这本书里面是有所介绍的，这本书还介绍了很多其他的数学知识，很有意思，值得大家去看看研究一番。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/01/kcp协议简析/" rel="next" title="kcp协议简析">
+                <i class="fa fa-chevron-left"></i> kcp协议简析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#problem"><span class="nav-number">1.1.</span> <span class="nav-text">problem</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Input"><span class="nav-number">1.2.</span> <span class="nav-text">Input</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Output"><span class="nav-number">1.3.</span> <span class="nav-text">Output</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Limits"><span class="nav-number">1.4.</span> <span class="nav-text">Limits</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Small-dataset"><span class="nav-number">1.5.</span> <span class="nav-text">Small dataset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Large-dataset"><span class="nav-number">1.6.</span> <span class="nav-text">Large dataset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Sample"><span class="nav-number">1.7.</span> <span class="nav-text">Sample</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#简单解释"><span class="nav-number">1.8.</span> <span class="nav-text">简单解释</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解题"><span class="nav-number">2.</span> <span class="nav-text">解题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#问题转化"><span class="nav-number">2.1.</span> <span class="nav-text">问题转化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决思路"><span class="nav-number">2.2.</span> <span class="nav-text">解决思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#结果"><span class="nav-number">2.3.</span> <span class="nav-text">结果</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#延伸"><span class="nav-number">3.</span> <span class="nav-text">延伸</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+

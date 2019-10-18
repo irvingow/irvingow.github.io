@@ -81,26 +81,17 @@
 
 
 
-<meta name="description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
+<meta name="description" content="前言最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。 概念简介">
 <meta property="og:type" content="article">
-<meta property="og:title" content="字符串匹配KMP算法">
-<meta property="og:url" content="http://yoursite.com/2019/07/27/字符串匹配KMP算法/index.html">
+<meta property="og:title" content="kcp协议简析">
+<meta property="og:url" content="http://yoursite.com/2019/10/01/kcp协议简析/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
+<meta property="og:description" content="前言最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。 概念简介">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050104.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050105.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050107.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050110.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050113.png">
-<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png">
-<meta property="og:updated_time" content="2019-07-27T09:15:23.336Z">
+<meta property="og:updated_time" content="2019-10-18T06:50:15.809Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="字符串匹配KMP算法">
-<meta name="twitter:description" content="好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了. 前言KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于">
-<meta name="twitter:image" content="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png">
+<meta name="twitter:title" content="kcp协议简析">
+<meta name="twitter:description" content="前言最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。 概念简介">
 
 
 
@@ -130,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/07/27/字符串匹配KMP算法/">
+  <link rel="canonical" href="http://yoursite.com/2019/10/01/kcp协议简析/">
 
 
 
 
 
-  <title>字符串匹配KMP算法 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>kcp协议简析 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -263,7 +254,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/27/字符串匹配KMP算法/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/01/kcp协议简析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="irving lwj">
@@ -280,7 +271,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">字符串匹配KMP算法</h1>
+          <h1 class="post-title" itemprop="name headline">kcp协议简析</h1>
         
 
         <div class="post-meta">
@@ -292,8 +283,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-27T16:20:31+08:00">
-                2019-07-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-01T15:59:49+08:00">
+                2019-10-01
               </time>
             
 
@@ -315,8 +306,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithm</span>
+                  <a href="/categories/network/" itemprop="url" rel="index">
+                    <span itemprop="name">network</span>
                   </a>
                 </span>
 
@@ -354,12 +345,8 @@
       
         <meta name="referrer" content="no-referrer">
 
-<p> 好久没写过博客了,其实由于暑期实习能写的素材还是有的,但是由于自己可能要准备考研,所以也那么多时间来做这些,不过最近在准备保研面试,所以又回看计算机的基础,看到了KMP算法,因此来简单写篇博客来记录一下,如果保研之路顺利的话,以后应该会经常写博客了,要是考研的话,估计要很久写不了了.</p>
-<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>KMP算法其实阮一峰老师已经写过相关的文章了,因此我也并不准备从头来写,打算主要借鉴一下他的文章,相当于搬运一下吧,顺便加深一下自己的印象,免得看过就忘.这是原博客地址:<a href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html" title="字符串匹配的KMP算法-阮一峰日志" target="_blank" rel="noopener">字符串匹配的KMP算法-阮一峰日志</a></p>
-<h4 id="普通的字符串匹配算法"><a href="#普通的字符串匹配算法" class="headerlink" title="普通的字符串匹配算法"></a>普通的字符串匹配算法</h4><p>普通的字符串匹配算法是明显低效的, 由于每一次匹配失败都会导致回滚到上次匹配成功的第一个字母的后面一个字母, 因此是浪费了时间的, 这样说可能不容易理解, 举个例子来看, 比如现在有字符串AAAAHAAAHAHAHA, 我们想找找HAHAHA是否存在与前面的字符串中, 当我们比较到第五个字符串的时候, 是匹配的,即H, 然后匹配下一个字符A, 发现也是匹配的, 继续, 发现原字符串的下一个字符是A, 但是我们期望的是H, 因此匹配失败, 这个时候普通的匹配算法会从第六个字符开始匹配, 也就是A, 这个时候肯定是匹配失败的, 实际上我们直观上来看就是很笨的行为, 我不太好形容, 但是因为我们已经成功匹配了2个字符, 即我们已经知道了原字符串中H下一个字符是A了, 我们想要匹配的字符第一个字符是H, 所以这样匹配明显是会失败的, 也就是说这点会导致我们的时间复杂度增加, 这也就是KMP算法改进的地方吧.</p>
-<h4 id="KMP算法"><a href="#KMP算法" class="headerlink" title="KMP算法"></a>KMP算法</h4><p>我将主要流程贴点图吧, 具体就不细说, 其实理解起来不太难<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050103.png" alt=" "><br>  下一步<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050104.png" alt=" "><br>  直到匹配到第一个字符<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050105.png" alt=" "><br>  向后匹配<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050107.png" alt="a"><br>  找到第一个不匹配的,需要重新开始匹配,这个时候就像我们在上面说的, 肯定不是直接向后移动1位开始匹配, 但是需要移动多少位呢, 这就是KMP算法会告诉我们的<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png" alt="a"><br>  先不管这个表怎么算的, 我们先用着, 后面会有解释<br>  计算移动位数的公式是:<br>  移动位数 = 已匹配的字符数 - 对应的部分匹配值<br>  在这里已匹配的字符数是6, 最后一个匹配的字符的部分匹配值查表为2, 故移动位数为4 = 6 - 2<br>  所以我们就跳到第8位开始继续匹配, 如下图<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050110.png" alt="a"><br>  重复上面的过程, 直到找到<br>  <img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050113.png" alt="a"><br>  如果要继续搜索, 就向后移动7位 = 7 - 0, 注意这里的7位不是字符串的长度, 是通过KMP算法计算出来的.</p>
-<h4 id="部分匹配表的计算"><a href="#部分匹配表的计算" class="headerlink" title="部分匹配表的计算"></a>部分匹配表的计算</h4><p>首先，要了解两个概念：”前缀”和”后缀”。 “前缀”指除了最后一个字符以外，一个字符串的全部头部组合；”后缀”指除了第一个字符以外，一个字符串的全部尾部组合。<br>“部分匹配值”就是”前缀”和”后缀”的最长的共有元素的长度。以”ABCDABD”为例:<br>－　“A”的前缀和后缀都为空集，共有元素的长度为0；<br>－　“AB”的前缀为[A]，后缀为[B]，共有元素的长度为0；<br>－　“ABC”的前缀为[A, AB]，后缀为[BC, C]，共有元素的长度0；<br>－　“ABCD”的前缀为[A, AB, ABC]，后缀为[BCD, CD, D]，共有元素的长度为0；<br>－　“ABCDA”的前缀为[A, AB, ABC, ABCD]，后缀为[BCDA, CDA, DA, A]，共有元素为”A”，长度为1；<br>－　“ABCDAB”的前缀为[A, AB, ABC, ABCD, ABCDA]，后缀为[BCDAB, CDAB, DAB, AB, B]，共有元素为”AB”，长度为2；<br>－　“ABCDABD”的前缀为[A, AB, ABC, ABCD, ABCDA, ABCDAB]，后缀为[BCDABD, CDABD, DABD, ABD, BD, D]，共有元素的长度为0。<br>上面也就是部分匹配表的由来:<br><img src="http://www.ruanyifeng.com/blogimg/asset/201305/bg2013050109.png" alt=" "><br>部分匹配的实质就是因为字符串内部的重复, 很好理解, 相信大家稍微动下脑筋都能看出来.</p>
-
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。</p>
+<h4 id="概念简介"><a href="#概念简介" class="headerlink" title="概念简介"></a>概念简介</h4>
       
     </div>
     
@@ -383,8 +370,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/27/A-start算法总结/" rel="next" title="A-start算法总结">
-                <i class="fa fa-chevron-left"></i> A-start算法总结
+              <a href="/2019/09/26/水池采样算法简介/" rel="next" title="水池采样算法简介">
+                <i class="fa fa-chevron-left"></i> 水池采样算法简介
               </a>
             
           </div>
@@ -393,8 +380,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/07/27/用数组来表示链表/" rel="prev" title="用数组来表示链表">
-                用数组来表示链表 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/10/18/kickstart-CountryLeader题解及延伸/" rel="prev" title="kickstart CountryLeader题解及延伸">
+                kickstart CountryLeader题解及延伸 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -527,7 +514,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#普通的字符串匹配算法"><span class="nav-number">2.</span> <span class="nav-text">普通的字符串匹配算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KMP算法"><span class="nav-number">3.</span> <span class="nav-text">KMP算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部分匹配表的计算"><span class="nav-number">4.</span> <span class="nav-text">部分匹配表的计算</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概念简介"><span class="nav-number">2.</span> <span class="nav-text">概念简介</span></a></li></ol></div>
             
 
           </div>
