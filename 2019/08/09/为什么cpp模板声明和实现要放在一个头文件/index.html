@@ -88,7 +88,7 @@
 <meta property="og:site_name" content="眼前的code">
 <meta property="og:description" content="前言说实话，我个人是不怎么使用模板的，使用场景很少，因此在上一篇博客里面难得用了一次模板，反而出了点小问题，我遇到的问题就是把声明和实现分开在h文件和cpp文件，因此在编译的时候怎么都无法通过，简直懵逼了，不过好在上网搜了一下突然想起来好像之前看到过模板的声明和实现必须都写在一个头文件中，这里我们来简单研究下为什么cpp里面，模板和声明是必须放在一起的。 测试代码让我们先写一份非模版实现的代码">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-08-09T13:12:47.963Z">
+<meta property="og:updated_time" content="2019-11-16T02:31:49.629Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为什么cpp模板声明和实现要放在一个头文件">
 <meta name="twitter:description" content="前言说实话，我个人是不怎么使用模板的，使用场景很少，因此在上一篇博客里面难得用了一次模板，反而出了点小问题，我遇到的问题就是把声明和实现分开在h文件和cpp文件，因此在编译的时候怎么都无法通过，简直懵逼了，不过好在上网搜了一下突然想起来好像之前看到过模板的声明和实现必须都写在一个头文件中，这里我们来简单研究下为什么cpp里面，模板和声明是必须放在一起的。 测试代码让我们先写一份非模版实现的代码">
@@ -362,7 +362,7 @@
 </blockquote>
 <p>在我电脑上，输出为0000000000000000 T __ZN4Test7get_eleE，这个时候，我们能够猜到这个就是get_ele这个函数的定义，其实这个新的名字是c++的一种给函数定义唯一标示的一种方式，这个是根据命名空间以及函数长度包括参数类型生成的，有一定的规则，不过这个其实没必要太关注（这里我多提一句，因为生成新名字的时候并不包括返回值的类型，这就是c++要求重载函数必须要求函数参数不同的原因）。不过当我们在遇到程序bug的时候，使用gdb也会看到这个东西，这个时候我们需要查看这个函数，这里我介绍一个辅助工具查看函数实际的名字</p>
 <blockquote>
-<p>c++ __ZN4Test7get_eleE</p>
+<p>c++filt __ZN4Test7get_eleE</p>
 </blockquote>
 <p>这个命令会告诉我们那个名字对应的真实名字，我这里对应的是Test::get_ele()，不多提，也就是说Test::get_ele()的实现是在test.o文件里面的，当执行到编译的第四个阶段的时候也就是链接，test_main.o会告诉链接器，它需要Test::get_ele()的定义，这个时候链接器发现，哎，test.o文件里面，那正好，然后顺利生成可执行文件，到这里都是顺理成章，那么，看起来我们可以猜测将模板类的声明和实现分开的话，是否链接器无法找到它想要的东西呢，让我们继续下一步。</p>
 <h4 id="模板代码编译尝试"><a href="#模板代码编译尝试" class="headerlink" title="模板代码编译尝试"></a>模板代码编译尝试</h4><p>这里，毋庸置疑，直接编译肯定是会失败的，那么让我们来看看，到底是哪里出了问题，根据编译报错,Undefined symbols for architecture x86_64: “TestTemplate&lt;int&gt;::get_ele()”, referenced from: _main in template_main-7858f0.o, 这个编译错误已经很明显的告诉我们，链接器没找到TestTemplate&lt;int&gt;::get_ele()的定义，那么我们来看看test_template.o里面是否有TestTemplate&lt;int&gt;::get_ele()的定义</p>
