@@ -81,17 +81,13 @@
 
 
 
-<meta name="description" content="前言最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。 概念简介">
-<meta property="og:type" content="article">
-<meta property="og:title" content="kcp协议简析">
-<meta property="og:url" content="http://yoursite.com/2019/10/01/kcp协议简析/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="眼前的code">
+<meta property="og:url" content="http://yoursite.com/archives/2020/index.html">
 <meta property="og:site_name" content="眼前的code">
-<meta property="og:description" content="前言最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。 概念简介">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-10-18T06:50:15.809Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kcp协议简析">
-<meta name="twitter:description" content="前言最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。 概念简介">
+<meta name="twitter:title" content="眼前的code">
 
 
 
@@ -121,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/10/01/kcp协议简析/">
+  <link rel="canonical" href="http://yoursite.com/archives/2020/">
 
 
 
 
 
-  <title>kcp协议简析 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>Archive | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -146,7 +142,7 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-archive">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -240,169 +236,71 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+  
+  
+  
+  <div class="post-block archive">
+    <div id="posts" class="posts-collapse">
+      <span class="archive-move-on"></span>
 
-  
+      <span class="archive-page-counter">
+        
+        
+         
+        
+        OK! 43 posts in total. Keep on posting.
+      </span>
 
-  
-  
-  
+      
+
+        
+        
+        
+
+        
+          
+          <div class="collection-title">
+            <h1 class="archive-year" id="archive-year-2020">2020</h1>
+          </div>
+        
+        
+
+        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/01/kcp协议简析/">
+    <header class="post-header">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="irving lwj">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="眼前的code">
-    </span>
-
-    
-      <header class="post-header">
-
+      <h2 class="post-title">
         
+            <a class="post-title-link" href="/2020/01/28/median-of-sorted-arrays题解/" itemprop="url">
+              
+                <span itemprop="name">median of sorted arrays题解</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">kcp协议简析</h1>
-        
+      </h2>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-01T15:59:49+08:00">
-                2019-10-01
-              </time>
-            
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated" datetime="2020-01-28T21:12:28+08:00" content="2020-01-28">
+          01-28
+        </time>
+      </div>
 
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/network/" itemprop="url" rel="index">
-                    <span itemprop="name">network</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <meta name="referrer" content="no-referrer">
-
-<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>最近在学习kcp协议的东西，看看这个协议怎么做到可靠传输的，这个协议理论上是不要求底层协议的，但是由于其原理是通过改善tcp的重传策略以及拥塞控制策略的，所以kcp的底层协议基本不会是tcp，否则就没有作用了，底层一般是udp协议，这样来看，其实我们想看的就是kcp是怎么做到可靠并快速传输的，学习一下网络底层传输的核心。</p>
-<h4 id="概念简介"><a href="#概念简介" class="headerlink" title="概念简介"></a>概念简介</h4>
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2019/09/26/水池采样算法简介/" rel="next" title="水池采样算法简介">
-                <i class="fa fa-chevron-left"></i> 水池采样算法简介
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/10/18/kickstart-CountryLeader题解及延伸/" rel="prev" title="kickstart CountryLeader题解及延伸">
-                kickstart CountryLeader题解及延伸 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
+    </header>
   </article>
 
 
 
-    <div class="post-spread">
       
+
     </div>
   </div>
+  
+  
+  
+
+  
+
 
 
           </div>
@@ -410,10 +308,6 @@
 
 
           
-
-  
-
-
 
         </div>
         
@@ -434,17 +328,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -504,22 +389,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概念简介"><span class="nav-number">2.</span> <span class="nav-text">概念简介</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -660,10 +529,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 

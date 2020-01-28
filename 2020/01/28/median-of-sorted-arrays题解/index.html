@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言median of sorted arrays排序数组的中位数，相信大家基本都听说过这道题的大名，一般面试的话面试官想要加大难度这道题是个很好的选择，说实话这道题我一直是很有畏惧感的，因为我觉得">
+<meta property="og:type" content="article">
+<meta property="og:title" content="median of sorted arrays题解">
+<meta property="og:url" content="http://yoursite.com/2020/01/28/median-of-sorted-arrays题解/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言median of sorted arrays排序数组的中位数，相信大家基本都听说过这道题的大名，一般面试的话面试官想要加大难度这道题是个很好的选择，说实话这道题我一直是很有畏惧感的，因为我觉得">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-01-28T14:35:13.913Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="median of sorted arrays题解">
+<meta name="twitter:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言median of sorted arrays排序数组的中位数，相信大家基本都听说过这道题的大名，一般面试的话面试官想要加大难度这道题是个很好的选择，说实话这道题我一直是很有畏惧感的，因为我觉得">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/28/median-of-sorted-arrays题解/">
+
+
+
+
+
+  <title>median of sorted arrays题解 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/28/median-of-sorted-arrays题解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">median of sorted arrays题解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-28T21:12:28+08:00">
+                2020-01-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<p>本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>median of sorted arrays排序数组的中位数，相信大家基本都听说过这道题的大名，一般面试的话面试官想要加大难度这道题是个很好的选择，说实话这道题我一直是很有畏惧感的，因为我觉得这道题的解法相对不直观甚至不太方便记忆，但是难啃的骨头最终也是要啃的，所以今天我花了大半天的时间来学习一下这个问题，同时参考了一些大神的想法，写出了此篇博客</p>
+<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p>给定两个已经排好序的数组A1和A2，其长度分别为m和n，找到这两个数组合并之后得到的数组的中位数，要求时间复杂度为O(log(m+n))</p>
+<h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>我觉得这道题一般的解法有两种：</p>
+<ol>
+<li><p>第一种是利用中位数在合并后数组中的位置，由于两个数组的长度分别为m和n，为了解释方便假设m+n为奇数，不妨设2*k+1=m+n，这个时候合并数组的中位数就是合并数组中第k大的数字（第k小也是一样），这个时候一些解法会通过不断削减两个数组的长度，最终找到期望的数字，这个方法一般做出来的时间复杂度就是O(log(m+n))，</p>
+</li>
+<li><p>第二种方法我觉得要更聪明，这个用到了二分查找的思想，先选择两个数组中长度更小的一个，假设这个数组为A1，然后找到合适的分割位置，假设分割线左边最大的数字为L1，分割线右边最小的数字为R1，然后再找另外一个数组假设为A2的分割位置，实际上这个分割位置是确定的，因为A2的分割位置和A1的分割位置是有关系的（后面会讲到两个分割位置之和为一个数），所以这个时候A2的分割位置实际上是不需要寻找的，再假设A2分割线左边最大的数字为L2，分割线右边最小的数字为R2，同时满足两个分割线左边的任意元素都小于等于两个分割线右边的任意元素，这个条件看着唬人，其实等价于:</p>
+<blockquote>
+<p>L1 &lt;= R1 &amp;&amp; L1 &lt;= R2 &amp;&amp; L2 &lt;= R1 &amp;&amp; L2 &lt;= R2</p>
+</blockquote>
+<p> 而由于数组是有序的，那么必然有L1 &lt;= R1 &amp;&amp; L2 &lt;= R2, 所以最终只需要满足L1 &lt;= R2 &amp;&amp; L2 &lt;= R1即可，如果满足了这两个条件，由于两个分割线左右数字数量相等，所以中位数实际上就是(max(L1,L2) + min(R1,R2))/2.0，写到这里，可能大家会有疑问，万一合并数组的总长度为奇数，那么两个分割线的左右数字总量肯定不相等啊，不要急，后面会有解释</p>
+</li>
+</ol>
+<h4 id="具体解释"><a href="#具体解释" class="headerlink" title="具体解释"></a>具体解释</h4><p>我记得我最早做这个问题的时候，被数组长度的奇偶性折腾的够呛，简直想分开处理这些情况了，但是这次既然咱们是二战这个问题，那么必然不会采用分开处理的方式，不然岂不是落了下乘（笑），那么我们的问题来了，如何屏蔽数组长度的奇偶性对我们的影响呢，聪明的读者应该能够想到，我们采用补数字的方式，对于数组的每个数字我们都复制一遍，这样每个数组的长度都是偶数，同时合并数组的长度也是偶数，例子如下：</p>
+<blockquote>
+<p>A1: 1 2 3 4 5<br>A2: 1 1 1 1 1 1</p>
+</blockquote>
+<p>经过我们的补数字之后，数组变成了这样：</p>
+<blockquote>
+<p>B1: 1 1 2 2 3 3 4 4 5 5<br>B2: 1 1 1 1 1 1 1 1 1 1 1 1</p>
+</blockquote>
+<p>这个时候，问题就变得简单了起来，总共有2m+2n个数字，所以两个分割线左边的数字长度之和为m+n，我们假设在数组B1中选择的分割线左边的数字长度为c1，那么在B2选择的分割线右边的数字长度为c2，并且c1+c2=m+n，现在就是确定L1，L2，R1和R2了，在B1和B2里面，这个不是问题，我们不妨假设c1为5，那么c2=5+6-5=6，在上面给出的例子中</p>
+<blockquote>
+<p>L1 = B1[5-1] = 3<br>R1 = B1[5] = 3<br>L2 = B2[6-1] = 1<br>R2 = B2[6] = 1</p>
+</blockquote>
+<p>这个时候，由于并不满足条件L1 &lt;= R2 &amp;&amp; L2 &lt;= R1，所以说明我们的分割线选的不合适，还需要继续寻找，所以这个实际上就是二分查找合适分割线的问题，所以时间复杂度为log(min(m,n))</p>
+<h4 id="小优化"><a href="#小优化" class="headerlink" title="小优化"></a>小优化</h4><p>上面的例子我们是通过补数字的方式来解决问题的，那么能否再优化一下，做到直接利用原数组呢，这个问题就需要我们观察补了数字的数组的索引了，通过上面的例子，我们可以看到数组B中元素到数组A中的映射关系是，B[I] = A[I/2]，I为B中任意一个数字的索引，所以现在问题变得简单了起来，我直接给出结论：</p>
+<blockquote>
+<p>L1 = A1[(c1-1)/2]<br>R1 = A1[c1/2]<br>L2 = A2[(c2-1)/2]<br>R2 = A2[c2/2]</p>
+</blockquote>
+<p>到现在问题基本已经解决了，个人觉得这个解释思路还算清楚</p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><p>下面给出最终版本的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">findMedianSortedArrays</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums1, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> size1 = nums1.size(), size2 = nums2.size();</span><br><span class="line">    <span class="keyword">if</span> (size1 &gt; size2)</span><br><span class="line">      <span class="keyword">return</span> findMedianSortedArrays(nums2, nums1);</span><br><span class="line">    <span class="comment">///lo为c1取值的下限，也就是0，hi为c1取值的上限，也就是2*size1（其实就是上面的2*min(m,n))</span></span><br><span class="line">    <span class="keyword">int</span> lo = <span class="number">0</span>, hi = <span class="number">2</span> * size1;</span><br><span class="line">    <span class="keyword">while</span> (lo &lt;= hi) &#123;</span><br><span class="line">      <span class="keyword">int</span> c1 = (lo + hi) / <span class="number">2</span>;</span><br><span class="line">      <span class="keyword">int</span> c2 = size1 + size2 - c1;</span><br><span class="line">      <span class="comment">///下面L1和L2取INT_MIN说明分割线左边没有元素了，直接取INT_MIN</span></span><br><span class="line">      <span class="keyword">int</span> L1 = (c1 == <span class="number">0</span>) ? INT_MIN : nums1[(c1 - <span class="number">1</span>) / <span class="number">2</span>];</span><br><span class="line">      <span class="keyword">int</span> L2 = (c2 == <span class="number">0</span>) ? INT_MIN : nums2[(c2 - <span class="number">1</span>) / <span class="number">2</span>];</span><br><span class="line">      <span class="comment">///下面R1和R2取INT_MAX说明分割线右边没有元素了，直接取INT_MAX</span></span><br><span class="line">      <span class="keyword">int</span> R1 = (c1 == <span class="number">2</span> * size1) ? INT_MAX : nums1[c1 / <span class="number">2</span>];</span><br><span class="line">      <span class="keyword">int</span> R2 = (c2 == <span class="number">2</span> * size2) ? INT_MAX : nums2[c2 / <span class="number">2</span>];</span><br><span class="line">      <span class="keyword">if</span> (L1 &gt; R2)</span><br><span class="line">        hi = c1 - <span class="number">1</span>;<span class="comment">///这个说明我们分割线选的靠右了，导致L1太大，所以将上限向左移</span></span><br><span class="line">      <span class="keyword">else</span> <span class="keyword">if</span> (L2 &gt; R1)</span><br><span class="line">        lo = c1 + <span class="number">1</span>;<span class="comment">///这个说明我们分割线选的靠左了，导致R1太小，所以将下限向右移</span></span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> (max(L1, L2) + min(R1, R2)) / <span class="number">2.0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>总的来说，我觉得这道题是个非常不错的题目，在leetcode中对得起hard的难度，首先我们需要想到使用两条分割线使得两个数组分割线左边和两条分割线右边的数组长度之和相同，这点已经不容易了，当我们想到这一步，我们还需要想到合适的办法来解决数组长度对我们解题的影响，我给出的这个办法是我参考leetcode题解的大神思路想出来的，他的思路是使用#来对数组进行补全，也是非常棒的方法，我的思路也是受他的启发，在这里也得感谢他的分享，以上。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/27/蓄水池采样算法/" rel="next" title>
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#题目"><span class="nav-number">2.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#思路"><span class="nav-number">3.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体解释"><span class="nav-number">4.</span> <span class="nav-text">具体解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小优化"><span class="nav-number">5.</span> <span class="nav-text">小优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码"><span class="nav-number">6.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
