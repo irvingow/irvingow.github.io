@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言最近还是在学习tcp相关的东西，这次想要总结的是tcp半连接和全连接的一些东西 warm-up先简单回复下tcp三次握手，客户端首先通过发送SYN请求向处于监听状态的服务器发起连接，在经典的实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tcp半连接及全连接学习笔记">
+<meta property="og:url" content="http://yoursite.com/2020/01/29/tcp半连接及全连接学习笔记/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言最近还是在学习tcp相关的东西，这次想要总结的是tcp半连接和全连接的一些东西 warm-up先简单回复下tcp三次握手，客户端首先通过发送SYN请求向处于监听状态的服务器发起连接，在经典的实现">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-f0c8638d8fed5ea2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5550522-bc91a054b3ac4294.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2020-01-29T10:59:10.819Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tcp半连接及全连接学习笔记">
+<meta name="twitter:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言最近还是在学习tcp相关的东西，这次想要总结的是tcp半连接和全连接的一些东西 warm-up先简单回复下tcp三次握手，客户端首先通过发送SYN请求向处于监听状态的服务器发起连接，在经典的实现">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5550522-f0c8638d8fed5ea2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/29/tcp半连接及全连接学习笔记/">
+
+
+
+
+
+  <title>tcp半连接及全连接学习笔记 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/29/tcp半连接及全连接学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">tcp半连接及全连接学习笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-29T10:37:57+08:00">
+                2020-01-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<p>本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>最近还是在学习tcp相关的东西，这次想要总结的是tcp半连接和全连接的一些东西</p>
+<h4 id="warm-up"><a href="#warm-up" class="headerlink" title="warm-up"></a>warm-up</h4><p>先简单回复下tcp三次握手，客户端首先通过发送SYN请求向处于监听状态的服务器发起连接，在经典的实现中服务器接受该数据包，并为该连接分配一定的资源，并发送SYN+ACK数据包。对服务器来说，接收到SYN并且回复SYN+ACK之后的状态变为SYN_RECV，此时该连接的状态称为半连接。而当客户端收到来自服务器的SYN+ACK之后，回复一个ACK给服务器，服务器收到这个ACK之后，连接状态变成ESTABLISHED，这个时候连接建立完成。在这个过程中，如果服务器一直没有收到来自客户端的ACK，那么服务器会在超时之后重传SYN+ACK<br><img src="https://upload-images.jianshu.io/upload_images/5550522-f0c8638d8fed5ea2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h4 id="半连接攻击应对方法"><a href="#半连接攻击应对方法" class="headerlink" title="半连接攻击应对方法"></a>半连接攻击应对方法</h4><p>在上面的介绍中我们可以看到，如果服务器没有收到来自客户端的ACK，那么服务器会重传SYN+ACK，如果重传达到一定次数，但还没收到ACK，那么服务器就会回收资源并且关闭这个半连接，当作一切都没发生。</p>
+<p>这个逻辑看上去没问题，但是我们考虑如果恶意攻击者故意大量发送不断发送的伪造的SYN报文，那么服务器就会分配大量注定无用的资源，并且服务器保存半连接的队列是有长度限制的，如果当服务器收到大量攻击报文的时候，它就不能接收正常的连接了，换句话说，这台服务器就失去提供服务的能力了，这就是大名鼎鼎的SYN-Flood攻击的原理，它是一种典型的DoS攻击</p>
+<h5 id="SYN-cookies算法"><a href="#SYN-cookies算法" class="headerlink" title="SYN cookies算法"></a>SYN cookies算法</h5><p>SYN-Flood攻击成立的关键在于服务器资源是有限的，而当服务器收到SYN数据包的时候，服务器会分配资源给这个可能发生的连接。通常服务器用资源保存此次请求的关键信息，包括请求来源和目的、以及一些TCP选项，比如最大报文段长度（MSS）、时间戳（timestamp）、是否开启选择确认（SACK）、窗口缩放因子（WS）等等。当后续的ACK报文到达的时候，三次握手完成，新的连接建立，这些信息可以被复制到连接结构中，用来指导后续的报文收发。那么现在的问题就是服务器如果通过不分配资源的情况下：</p>
+<ol>
+<li>验证之后可能到达的ACK的有效性，保证这是一次完整的握手</li>
+<li>获得SYN报文中携带的TCP选项信息</li>
+</ol>
+<p>下面就引入了SYN cookies算法，SYN cookies算法一般都能保证解决第一个问题，第二个问题只能尽量保证。<br>我们都知道，TCP连接建立时，双方的起始报文序号是任意的。SYN cookies算法正是利用了这一点，按照以下规则来构造初始化报文序列号：</p>
+<ol>
+<li>设t为一个缓慢增长的时间戳（典型实现是每64s递增一次）</li>
+<li>设m为客户端发送的SYN报文中的MSS选项值</li>
+<li>设s是连接的元组信息（源ip，目的ip，源端口，目的端口）和t经过密码学运算之后得到的hash值，即s = hash(sip, dip, sport,dport, t)，s的结果取低24位</li>
+</ol>
+<p>则初始序列号n为：</p>
+<ol>
+<li>高5位为t mod 32</li>
+<li>接下来的3位是m的编码值（实际上并不是编码值而是索引）</li>
+<li>低24位为s</li>
+</ol>
+<p>当客户端收到SYN+ACK报文之后，根据TCP标准，它会回复ACK报文，且报文中ack = n + 1，当服务器接收到ACK时，将ack的值减一就得到了它之前发送的n，服务器通过这种巧妙的方式间接保存了一部分SYN报文的信息。<br>接下来，服务器对获得的n进行校验：</p>
+<ol>
+<li>将n的高五位与当前时间戳t%32进行比较，看看到达时间是否是正常的（基本上相等或者差1，太大了基本不对劲）</li>
+<li>根据t和连接元组重新计算s，看看是否与低24一致，如果不一致，说明这个报文是伪造的</li>
+<li>解码序号中隐藏的MSS信息</li>
+</ol>
+<p>至此，连接就可以顺利建立了。</p>
+<h5 id="SYN-Cookies算法的缺点"><a href="#SYN-Cookies算法的缺点" class="headerlink" title="SYN Cookies算法的缺点"></a>SYN Cookies算法的缺点</h5><ol>
+<li>MSS的编码只有三位，因此最多只能使用8种MSS值</li>
+<li>服务器必须拒绝客户端SYN报文中一些只在SYN和SYN+ACK中协商的选项，原因是服务器没有地方来保存这些选项，比如SACK和WS</li>
+<li>增加了密码学运算，不要小瞧这个缺点，如果密码学运算比较复杂，在DDoS大量攻击的情况下，可能会打爆服务器的cpu，这种情况实际上也间接导致了服务器无法提供服务</li>
+</ol>
+<p>上面的这些缺点可以说是导致了这个算法没有被纳入TCP标准，所以对于SYN Cookies的实现可能也是多种多样的，比如Linux的实现就和我上面介绍的并不相同，这里我就不介绍了，感兴趣的同学可以自行查阅一波</p>
+<h5 id="其他SYN-Flood攻击应对方式"><a href="#其他SYN-Flood攻击应对方式" class="headerlink" title="其他SYN Flood攻击应对方式"></a>其他SYN Flood攻击应对方式</h5><p>其他抵御SYN Flood的方式有下面这三种，这三种方式主要都依赖与防火墙的帮助来解决问题：</p>
+<ol>
+<li>SYN网关<br>防火墙收到客户端的SYN包时，直接转发给服务器，防火墙收到服务器的SYN+ACK后，一方面将SYN+ACK转发给客户端，另一个方面以客户端的名义给服务器回送一个ACK包，完成TCP的三次握手，让服务器端从半连接状态变成连接状态。当客户端真正的ACK到达时，如果有携带数据，那么就转发给服务器，否则就丢弃该包。由于服务器承受连接状态的能力比半连接状态要高很多，所以这种办法能够有效的减轻对服务器的攻击。</li>
+<li>被动式SYN网关<br>设置防火墙的SYN请求参数，让它远小于服务器的超时期限。防火墙负责转发客户端发往服务器的SYN包，服务器发往客户端的SYN+ACK包，以及客户端回送给服务器端的ACK包。这样，如果客户端在防火墙计时器超时的时候还没发送ACK包，那么防火墙就会往服务器发送RST，服务器就会从队列中删除半连接。由于半连接的超时参数远远小于服务器的超时期限，因此这样能够有效的防止SYN Flood攻击</li>
+<li>SYN中继<br>防火墙收到客户端的SYN包之后，并不是向服务器转发而是记录该状态消息，再主动给客户端发送SYN+ACK包，如果收到客户端的ACK包，说明是正常访问，由防火墙向服务器发送SYN包并且完成三次握手。这种方式用防火墙做为代理来实现客户端和服务端的连接，可以做到完全过滤不可用连接发往服务器。（我本人对这种方式略微有些质疑，因为这种方式没有解决导致SYN Flood攻击的根源，而是通过引走祸水的方式，这种方式我表示质疑，不过可能有我不清楚的地方，如果有懂的朋友请拍砖，不必客气）</li>
+</ol>
+<h4 id="全连接之TCP-DEFER-ACCEPT"><a href="#全连接之TCP-DEFER-ACCEPT" class="headerlink" title="全连接之TCP_DEFER_ACCEPT"></a>全连接之TCP_DEFER_ACCEPT</h4><p>这个项目是自从Linux 2.4之后才有的，man page上给出的解释是：<br>Allow a listener to be awaken only when data arrives on the socket. Takes an integer value(seconds), this can bound the maximum number of attempts TCP will make to complete the connection. This option should not be used in code intended to be portable.</p>
+<p>这里我简单谈下自己的理解，首先我们需要知道这个选项是希望解决什么问题，在我看来这个选项能够解决两个问题：</p>
+<ol>
+<li><p>对于服务端，设置了TCP_DEFER_ACCEPT选项，服务端在收到客户端的三次握手中最后一个ACK之后不会直接将这个socket的状态转变为ESTABLISHED状态，因为一旦套接字变成ESTABLISHED状态，这个套接字就会被放入全连接队列中，等待应用层调用accept（更多的情况是上层正在等待新连接，那么就直接唤醒进程）。如果没有这个选项，那么当客户端的最后一个ACK到达的时候，应用层被唤醒，但是如果客户端这个时候没有数据发送，那么应用层可能会继续堵塞，这样就造成了不必要的唤醒。而增加了这个选项的话，当客户端最后一个ACK到来的时候，内核并不会把这个连接的状态改成ESTABLISHED，而是选择丢弃这个ACK（但是会更改一些状态），所以这个socket的状态仍然为SYN_RECV，所以服务器会继续向客户端发送SYN+ACK，直到我们设定的超时时间到（实际上底层代码会将我们设定的超时时间转化为重传次数，这个重传次数和系统选项tcp_synack_retries共同影响最终的重传次数），如果对于服务端的重传，客户端每次都能给出回应，那么就算重传次数到了，客户端仍然会和服务器建立连接，但是如果中间客户端无法给出回应，服务器达到重传次数之后就会主动断开连接。因此，对于服务端来说，这个TCP_DEFER_ACCEPT选项主要是提高服务器的性能，尽量让服务器每次被唤醒就能够从客户端读取请求，进行处理。至于有些文章说的，抵御TCP全连接攻击，我认为是个人是不太认同的。</p>
+</li>
+<li><p>对于客户端，这个选项的好处就在于当客户端收到来自服务端的SYN+ACK时，可以延迟再发送ACK，等到有数据需要发送的时候再一起发送，这样能够减小对网络的负担，这个很好理解，这个和TCP的Delay Ack的思想是一样的。</p>
+</li>
+</ol>
+<h4 id="补充：tcp建立连接之backlog参数"><a href="#补充：tcp建立连接之backlog参数" class="headerlink" title="补充：tcp建立连接之backlog参数"></a>补充：tcp建立连接之backlog参数</h4><p>不知道大家有没有注意过，listen函数是有两个参数的，第一个参数是socket fd，这个没有任何疑问，但是第二个参数backlog的意义相信大部分人可能都没那么清楚，这里我就简单补充下这个参数，这个参数很有意思，因为这个参数实际上并没有非常明确的含义（笑），在UNP卷1中很谨慎说在某些实现中，backlog为已完成的连接队列和未完成的连接队列之和的上限。一般处于ESTABLISHED状态但没有被上层应用程序accept的连接是放在全连接队列中的，处于SYN_RECV状态的连接是半连接。<br><img src="https://upload-images.jianshu.io/upload_images/5550522-bc91a054b3ac4294.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当服务器收到一个SYN后，它创建一个半连接加入到SYN_RECV队列中，在收到客户端回复的ACK之后，它将这个半连接移动到ESTABLISHED队列。最后当用户调用accept之后，会从连接从全连接队列中取出。<br>注意的我上面写了backlog在不同实现下的可能是不同的，而Linux对listen的第二个参数实现就与我在上面写的不同，Linux的man page给出的解释是：</p>
+<blockquote>
+<p>The behavior of the backlog argument on TCP sockets changed with Linux 2.2. Now it specifies the queue length for completely established sockets waiting to be accepted, instead of the number incomplete connection requests.</p>
+</blockquote>
+<p>翻译一下，也就是说自从Linux2.2之后，backlog参数只限制了完成了三次握手但是没有被accept的连接的数目，其实也就是限制了全连接队列的长度。这里我参考另外一篇博客的代码进行了测试，这里我只给出结论，假设我们设定backlog为4，那么最多可以建立5个连接，第六个连接服务器就不会再响应了（但是实际上服务器是会记录这个连接的，它将这个连接的状态置为SYN_RECV，但是它并不向客户端发送SYN+ACK，因为一旦发送的话客户端就会认为连接已经建立，但是实际上由于服务端的全连接队列已满，所以这个连接是无法进入ESTABLISHED状态，而是仍然保持为SYN_RECV状态，而客户端状态已经转变为ESTABLISHED，这样的连接是错误的，无法传输数据）这里我简单解释下为什么建立的是5个连接，因为当第五个连接到来的时候，系统发现此时全连接队列的长度为4，并没有大于4，所以第五个连接可以被正常建立起来，而当第六个连接建立的时候，全连接队列的长度是5，已经大于4了，所以无法建立新的连接。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>本文简单介绍了一些tcp建立连接的一些有意思的东西，如果平时不注意的话或者只是浅浅的了解tcp，这些细节可能很多人都不知道，这里总结一下加深一下自己的印象方便自己以后复习，以上仅仅是我个人的理解，如果有不正确的地方希望大家千万不要客气，指出来，互相交流才能更好的进步，完。</p>
+<p>参考文章链接：<br><a href="https://segmentfault.com/a/1190000019252960" target="_blank" rel="noopener">backlog参数对TCP连接建立的影响</a><br><a href="https://segmentfault.com/a/1190000019292140" target="_blank" rel="noopener">深入浅出TCP中的SYN-Cookies</a><br><a href="https://blog.csdn.net/for_tech/article/details/54175571" target="_blank" rel="noopener">Linux TCP_DEFER_ACCEPT的作用</a><br><a href="http://www.lenky.info/archives/2013/02/2219" target="_blank" rel="noopener">Socket选项系列之TCP_DEFER_ACCEPT</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/28/median-of-sorted-arrays题解/" rel="next" title="median of sorted arrays题解">
+                <i class="fa fa-chevron-left"></i> median of sorted arrays题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#warm-up"><span class="nav-number">2.</span> <span class="nav-text">warm-up</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#半连接攻击应对方法"><span class="nav-number">3.</span> <span class="nav-text">半连接攻击应对方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SYN-cookies算法"><span class="nav-number">3.1.</span> <span class="nav-text">SYN cookies算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SYN-Cookies算法的缺点"><span class="nav-number">3.2.</span> <span class="nav-text">SYN Cookies算法的缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其他SYN-Flood攻击应对方式"><span class="nav-number">3.3.</span> <span class="nav-text">其他SYN Flood攻击应对方式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全连接之TCP-DEFER-ACCEPT"><span class="nav-number">4.</span> <span class="nav-text">全连接之TCP_DEFER_ACCEPT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#补充：tcp建立连接之backlog参数"><span class="nav-number">5.</span> <span class="nav-text">补充：tcp建立连接之backlog参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
