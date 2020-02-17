@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言最近在学习操作系统的知识，又看到了经典的并发模型，不得不说在多线程编程中，最好使用一些已经被验证过的正确的模型，其中生产者消费者模型就是典型的成功模型，值得学习，其实之前我也写过生产者消费者的实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c++多线程生产者消费者模型以及读写锁实现">
+<meta property="og:url" content="http://yoursite.com/2020/02/17/多线程生产者消费者模型以及读写锁实现/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言最近在学习操作系统的知识，又看到了经典的并发模型，不得不说在多线程编程中，最好使用一些已经被验证过的正确的模型，其中生产者消费者模型就是典型的成功模型，值得学习，其实之前我也写过生产者消费者的实">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-02-17T15:07:03.982Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="c++多线程生产者消费者模型以及读写锁实现">
+<meta name="twitter:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言最近在学习操作系统的知识，又看到了经典的并发模型，不得不说在多线程编程中，最好使用一些已经被验证过的正确的模型，其中生产者消费者模型就是典型的成功模型，值得学习，其实之前我也写过生产者消费者的实">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/17/多线程生产者消费者模型以及读写锁实现/">
+
+
+
+
+
+  <title>c++多线程生产者消费者模型以及读写锁实现 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/17/多线程生产者消费者模型以及读写锁实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">c++多线程生产者消费者模型以及读写锁实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-17T21:21:24+08:00">
+                2020-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/computers/" itemprop="url" rel="index">
+                    <span itemprop="name">computers</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<p>本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>最近在学习操作系统的知识，又看到了经典的并发模型，不得不说在多线程编程中，最好使用一些已经被验证过的正确的模型，其中生产者消费者模型就是典型的成功模型，值得学习，其实之前我也写过生产者消费者的实现，但这次我会稍微深入一些，为什么要这样写，如果不这样写会带来什么样的问题。</p>
+<h4 id="简单但是有问题的例子"><a href="#简单但是有问题的例子" class="headerlink" title="简单但是有问题的例子"></a>简单但是有问题的例子</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> buffer;</span><br><span class="line"><span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">put</span><span class="params">(<span class="keyword">int</span> value)</span></span>&#123;</span><br><span class="line">  assert(count == <span class="number">0</span>);</span><br><span class="line">  count = <span class="number">1</span>;</span><br><span class="line">  buffer = value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">  assert(count == <span class="number">1</span>);</span><br><span class="line">  count = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> buffer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面是put()和get()函数的实现</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cond_t</span> cond;</span><br><span class="line"><span class="keyword">mutex_t</span> mutex;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">producer</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i ;</span><br><span class="line">  <span class="keyword">int</span> loops = (<span class="keyword">int</span>)arg;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; loops; ++i)&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;mutex);         <span class="comment">//p1</span></span><br><span class="line">    <span class="keyword">if</span>(count == <span class="number">1</span>)                      <span class="comment">//p2</span></span><br><span class="line">      pthread_cond_wait(&amp;cond, &amp;mutex); <span class="comment">//p3</span></span><br><span class="line">    put(i);                             <span class="comment">//p4</span></span><br><span class="line">    pthread_cond_signal(&amp;cond);         <span class="comment">//p5</span></span><br><span class="line">    pthread_mutex_unlock(&amp;mutex);       <span class="comment">//p6</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i ;</span><br><span class="line">  <span class="keyword">int</span> loops = (<span class="keyword">int</span>)arg;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; loops; ++i)&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;mutex);         <span class="comment">//c1</span></span><br><span class="line">    <span class="keyword">if</span>(count == <span class="number">0</span>)                      <span class="comment">//c2</span></span><br><span class="line">      pthread_cond_wait(&amp;cond, &amp;mutex); <span class="comment">//c3</span></span><br><span class="line">    <span class="keyword">int</span> tmp = get();                    <span class="comment">//c4</span></span><br><span class="line">    pthread_cond_signal(&amp;cond);         <span class="comment">//c5</span></span><br><span class="line">    pthread_mutex_unlock(&amp;mutex);       <span class="comment">//c6</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,tmp);                 <span class="comment">//c7</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个应该是最简单，最直接的生产者消费者实现了，但是这里有两个问题，让我们来一个一个解决，第一个问题就是当有超过一个消费者的时候，这个代码有个十分严重的问题，假设一个消费者在缓冲区为空的时候进行消费，很显然，这个消费者线程会被阻塞在pthread_cond_wait（注意阻塞的时候这个消费者是不持有锁的），这个时候假设一个生产者生产了资料放入缓冲，然后调用pthread_cond_sigal，之前阻塞的线程会被放入到就绪队列中，准备运行。但是假设这个时候有个新的消费者线程来了，我们叫它第三者吧，由于之前的消费者还没有从pthread_cond_wait中返回，以及之前的生产者已经完成生产，阻塞在pthread_cond_wait中（因为缓冲区已经满了），这个时候实际上锁是没有被任何线程持有的，所以这个第三者长驱直入，直接把生产者消费的消费掉了，然后大大咧咧的跑了，这个时候之前就绪的消费者被调度，调用get()结果发现缓冲区为空，直接触发了assert，导致错误。</p>
+<p>引发这个问题的原因很简单，因为在第一个消费者被生产者唤醒之后但在其运行之前，缓冲区已经发生了变化（由于另外一个消费者线程的运行）。这个实际上意味着消费者收到被唤醒的信号仅仅意味着状态可能发生了变化（并不代表等待的事情一定发生了）。这个实际上是对唤醒信号语义的理解，解决这个问题的办法也不难，代码如下：</p>
+<h4 id="用while代替if的办法（仍有问题）"><a href="#用while代替if的办法（仍有问题）" class="headerlink" title="用while代替if的办法（仍有问题）"></a>用while代替if的办法（仍有问题）</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cond_t</span> cond;</span><br><span class="line"><span class="keyword">mutex_t</span> mutex;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">producer</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i ;</span><br><span class="line">  <span class="keyword">int</span> loops = (<span class="keyword">int</span>)arg;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; loops; ++i)&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;mutex);         <span class="comment">//p1</span></span><br><span class="line">    <span class="keyword">while</span>(count == <span class="number">1</span>)                   <span class="comment">//p2</span></span><br><span class="line">      pthread_cond_wait(&amp;cond, &amp;mutex); <span class="comment">//p3</span></span><br><span class="line">    put(i);                             <span class="comment">//p4</span></span><br><span class="line">    pthread_cond_signal(&amp;cond);         <span class="comment">//p5</span></span><br><span class="line">    pthread_mutex_unlock(&amp;mutex);       <span class="comment">//p6</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i ;</span><br><span class="line">  <span class="keyword">int</span> loops = (<span class="keyword">int</span>)arg;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; loops; ++i)&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;mutex);         <span class="comment">//c1</span></span><br><span class="line">    <span class="keyword">while</span>(count == <span class="number">0</span>)                   <span class="comment">//c2</span></span><br><span class="line">      pthread_cond_wait(&amp;cond, &amp;mutex); <span class="comment">//c3</span></span><br><span class="line">    <span class="keyword">int</span> tmp = get();                    <span class="comment">//c4</span></span><br><span class="line">    pthread_cond_signal(&amp;cond);         <span class="comment">//c5</span></span><br><span class="line">    pthread_mutex_unlock(&amp;mutex);       <span class="comment">//c6</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,tmp);                 <span class="comment">//c7</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用while代替if确实解决了之前的问题，但是这个实现仍然是有问题的，那么问题在哪呢？<br>想象下面的场景，假设有一个生产者线程P和两个消费者线程C1以及C2，假设两个消费者线程先运行，并且由于缓冲区为空所以都睡眠了，生产者P运行在缓冲区放入一个值之后唤醒了一个消费者假设是C1，之后进入睡眠，这个时候C1发现缓冲区有数据，就直接消费了，然后这个消费者调用了pthread_cond_signal(&amp;cond),但是这个时候有个问题就是，应该唤醒哪个等待的线程呢？我们知道肯定应该唤醒生产者线程，但是如果它唤醒了C2（这个是绝对可能的，取决于等待队列的实现），这个时候问题就出现了，由于C2唤醒之后发现缓冲区为空，就直接继续调用pthread_cond_wait(&amp;cond,&amp;mutex)，进入睡眠了，这个时候三个线程都处于睡眠的状态，显然这是个问题。</p>
+<p>本质上这个问题是由于信号的不明确导致的（不过如果使用pthread_cond_broadcast也是可以的，但是在线程很多的情况下非常没有必要，因为我们只需要唤醒生产者即可），要解决问题，实际上信号需要做到消费者的信号只唤醒生产者，生产者的信号只唤醒消费者就好了。</p>
+<h4 id="简单但是正确的例子"><a href="#简单但是正确的例子" class="headerlink" title="简单但是正确的例子"></a>简单但是正确的例子</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cond_t</span> empty, fill;</span><br><span class="line"><span class="keyword">mutex_t</span> mutex;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">producer</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i ;</span><br><span class="line">  <span class="keyword">int</span> loops = (<span class="keyword">int</span>)arg;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; loops; ++i)&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;mutex);         <span class="comment">//p1</span></span><br><span class="line">    <span class="keyword">while</span>(count == <span class="number">1</span>)                   <span class="comment">//p2</span></span><br><span class="line">      pthread_cond_wait(&amp;emtpy, &amp;mutex);<span class="comment">//p3</span></span><br><span class="line">    put(i);                             <span class="comment">//p4</span></span><br><span class="line">    pthread_cond_signal(&amp;fill);         <span class="comment">//p5</span></span><br><span class="line">    pthread_mutex_unlock(&amp;mutex);       <span class="comment">//p6</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i ;</span><br><span class="line">  <span class="keyword">int</span> loops = (<span class="keyword">int</span>)arg;</span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; loops; ++i)&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;mutex);         <span class="comment">//c1</span></span><br><span class="line">    <span class="keyword">while</span>(count == <span class="number">0</span>)                   <span class="comment">//c2</span></span><br><span class="line">      pthread_cond_wait(&amp;fill, &amp;mutex); <span class="comment">//c3</span></span><br><span class="line">    <span class="keyword">int</span> tmp = get();                    <span class="comment">//c4</span></span><br><span class="line">    pthread_cond_signal(&amp;empty);        <span class="comment">//c5</span></span><br><span class="line">    pthread_mutex_unlock(&amp;mutex);       <span class="comment">//c6</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,tmp);                 <span class="comment">//c7</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>这里简单说明了生产者消费者模型的几个小细节，之前我也写过c++中如何实现一个生产者消费者模型，链接在这里：<a href="https://irvingow.github.io/2019/08/08/cpp%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener">c++生产者消费者模型实现</a></p>
+<p>简单提一句的是总是对条件变量使用while而不是if，使用while循环也解决了假唤醒的情况，在某些线程库中，由于不同的实现，一个信号可能会唤醒两个线程，因此再次检查线程的等待条件是正确的操作。</p>
+<p>参考文献：<br>操作系统导论(Operating Systems:Three Easy Pieces)</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/29/tcp半连接及全连接学习笔记/" rel="next" title="tcp半连接及全连接学习笔记">
+                <i class="fa fa-chevron-left"></i> tcp半连接及全连接学习笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/17/cpp实现读写锁以及写者优先的读写锁/" rel="prev" title="cpp实现读写锁以及写者优先的读写锁">
+                cpp实现读写锁以及写者优先的读写锁 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单但是有问题的例子"><span class="nav-number">2.</span> <span class="nav-text">简单但是有问题的例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用while代替if的办法（仍有问题）"><span class="nav-number">3.</span> <span class="nav-text">用while代替if的办法（仍有问题）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单但是正确的例子"><span class="nav-number">4.</span> <span class="nav-text">简单但是正确的例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
