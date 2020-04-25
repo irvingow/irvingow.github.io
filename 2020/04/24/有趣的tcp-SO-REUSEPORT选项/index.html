@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言在网上冲浪的时候无意发现了一个好玩的东西，就是tcp的一个选项:SO_REUSEPORT，为什么说这个选项有趣呢，因为这个选项能够帮助我们做到一些之前做不到的事情，比如将端口绑定到一个已经被监听">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有趣的tcp SO_REUSEPORT选项">
+<meta property="og:url" content="http://yoursite.com/2020/04/24/有趣的tcp-SO-REUSEPORT选项/index.html">
+<meta property="og:site_name" content="眼前的code">
+<meta property="og:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言在网上冲浪的时候无意发现了一个好玩的东西，就是tcp的一个选项:SO_REUSEPORT，为什么说这个选项有趣呢，因为这个选项能够帮助我们做到一些之前做不到的事情，比如将端口绑定到一个已经被监听">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-04-24T15:23:27.412Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="有趣的tcp SO_REUSEPORT选项">
+<meta name="twitter:description" content="本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！ 前言在网上冲浪的时候无意发现了一个好玩的东西，就是tcp的一个选项:SO_REUSEPORT，为什么说这个选项有趣呢，因为这个选项能够帮助我们做到一些之前做不到的事情，比如将端口绑定到一个已经被监听">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/24/有趣的tcp-SO-REUSEPORT选项/">
+
+
+
+
+
+  <title>有趣的tcp SO_REUSEPORT选项 | 眼前的code</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">眼前的code</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">远方的world</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br>
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/24/有趣的tcp-SO-REUSEPORT选项/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="irving lwj">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="眼前的code">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">有趣的tcp SO_REUSEPORT选项</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-24T21:11:08+08:00">
+                2020-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<p>本文首发于我的公众号：码农手札，主要介绍linux下c++开发的知识包括网络编程的知识同时也会介绍一些有趣的算法题，欢迎大家关注，利用碎片时间学习一些编程知识，冰冻三尺非一日之寒，让我们一起加油！</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>在网上冲浪的时候无意发现了一个好玩的东西，就是tcp的一个选项:SO_REUSEPORT，为什么说这个选项有趣呢，因为这个选项能够帮助我们做到一些之前做不到的事情，比如将端口绑定到一个已经被监听的端口上去，下面我来稍微具体的说一说</p>
+<h4 id="何为一个TCP连接"><a href="#何为一个TCP连接" class="headerlink" title="何为一个TCP连接"></a>何为一个TCP连接</h4><p>这个问题，是涉及到一个很基础也非常重要的一个概念，tcp四元组（如果把套接字类型也作为一个元的话就是五元组），一个tcp四元组的定义如下：</p>
+<blockquote>
+<p>[对端地址，对端端口，本地地址，本地端口]</p>
+</blockquote>
+<p>任何合法的四个值的组合都可以定义一个唯一的tcp连接，udp本质上也是，有些时候我们作为客户端发起连接，并没有指定特定的ip或者port，但是其实分配ip和port的事情操作系统帮我们做了，所以这些对我们都是无感的。</p>
+<p>当作为服务器端绑定ip的时候，我们可以通过绑定到0.0.0.0:port来绑定到所有本地网络地址的port端口上，也可以选择绑定到192.168.1.100:port来绑定到一个特定ip的port上去。在默认的情况下，没有第二个socket能够绑定到同一地址的同一端口。比如socket A已经绑定了0.0.0.0:9999之后，Socket B如果想再绑定到127.0.0.1:9999，就会报EADDRINUSE错误，因为Socket A已经绑定了本机所有ip地址的9999端口，包括127.0.0.1:9999，因此无法再次绑定</p>
+<h4 id="SO-REUSEADDR"><a href="#SO-REUSEADDR" class="headerlink" title="SO_REUSEADDR"></a>SO_REUSEADDR</h4><h5 id="作用一"><a href="#作用一" class="headerlink" title="作用一"></a>作用一</h5><p>在一个socket设置了SO_REUSEADDR选项之后，判断冲突的方式就变了。只要地址不是完全一模一样，那么多个socket是可以绑定到同一个ip和port上去，比如0.0.0.0和127.0.0.1，虽然逻辑意义上前者包含后者，但是0.0.0.0泛指所有本地ip，127.0.0.1特指本机环回地址，所以当第二个socket再尝试绑定的时候，就不会报错了，而是会显示绑定成功（实际上也和操作系统的限制有关，未必一定能成功，后面会有介绍）</p>
+<h5 id="作用二"><a href="#作用二" class="headerlink" title="作用二"></a>作用二</h5><p>设置了SO_REUSEADDR选项之后，这个socket就可以绑定处于time_wait状态的地址了，所以从这个角度来看，我认为SO_REUSEADDR更多的价值反而体现在这里，上一个作用其实意义并不大本质上因为上一个作用的能力不够强（在下面SO_REUSEPORT里面会再细说），因为它解决了time_wait这个痛点问题（解决time_wait的另外一个办法是快速回收）</p>
+<p>tcp连接断开的四次挥手以及对应的状态我相信大家都有了解，所以time_wait状态主要有两个作用，这里我们不提，一个问题就是time_wait的时间实在是太久了，在大部分机器上可能都有两分钟之久（如果设置了SO_LINGER选项则socket超时时间是可以控制的，但这个不是默认的情况），也就是说在这两分钟内，处于time_wait状态的socket对应的地址端口都是被占用的，也就是无法重新绑定。</p>
+<p>如果我们电脑上有一个服务，它监听某个端口，但是这个服务突然异常挂掉了，这个时候如果time_wait的时间长达2分钟，那么也就意味着这两分钟内这个socket的对应的地址端口是被占用的，无法重新绑定，这个时候可能就出现问题了。</p>
+<p>但是SO_REUSEADDR这个选项就可以搞定这个问题，因为设置了这个选项的socket可以使用处于time_wait状态的socket绑定的地址端口了。虽然说这样可能引起一些副作用，但是发生的情况很少，因此也就不考虑了，如果想要必要完美的处理这种问题的话，可以就需要参考tcp的优雅关闭了，这个不是我们这里的重点，我不展开来说</p>
+<h4 id="SO-REUSEPORT"><a href="#SO-REUSEPORT" class="headerlink" title="SO_REUSEPORT"></a>SO_REUSEPORT</h4><h5 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h5><p>在上面介绍SO_REUSEADDR的时候我说到，SO_REUSEADDR这个选项的能力不够强，为什么这么说呢，让我们来看看SO_REUSEPORT的能力吧，这个选项允许将多一个socket绑定到同一个ip和port，没错，就算ip和port一模一样也没关系，这个能力就比SO_REUSEADDR的能力强多了，所以有了这个选项之后SO_REUSEADDR的第一个能力反而显得微不足道了，不过它第二个能力还是有用的。针对将多个socket绑定到一个ip和port的情况，有些操作系统要求这些socket全部都需要设置SO_REUSEPORT，有些操作系统可能只要求第二个及之后的socket要设置这个选项。</p>
+<h5 id="带来的有趣的问题"><a href="#带来的有趣的问题" class="headerlink" title="带来的有趣的问题"></a>带来的有趣的问题</h5><p>这个选项的能力太强了，所以它也带来了一个有趣的问题，也就是connect返回EADDRINUSE的问题，这个问题可能很多人觉得匪夷所思，为什么会这样呢，如果大家不能理解说明大家很少对client调用bind函数（笑），如果两个socket都设置了SO_REUSEPORT选项，并且绑定到同一个地址，这个时候都对一个服务器ip和port发起请求，那么网速慢一点的请求就无法建立连接来（笑），回忆我们上面说的，因为tcp是由四元组决定的，所以四元组不可以重复，所以对于动作慢了一点的socket，它调用的connect函数就会返回EADDRINUSE错误。实际上这个问题在SO_REUSEADDR的时候也会出现，大家思考一下为什么，提示一下和网络出口ip有关</p>
+<h4 id="Linux系统下的两个选项"><a href="#Linux系统下的两个选项" class="headerlink" title="Linux系统下的两个选项"></a>Linux系统下的两个选项</h4><h5 id="Linux-lt-3-9"><a href="#Linux-lt-3-9" class="headerlink" title="Linux &lt; 3.9"></a>Linux &lt; 3.9</h5><p>在Linux内核版本小于3.9的时候，SO_REUSEPORT选项是不存在的，只有SO_REUSEADDR这个选项，对于服务器端这个选项是一定要被设置的，在设置了SO_REUSEADDR之后，行为大致和我们在上面介绍的那样，但是注意Linux做了一些限制，举例：</p>
+<ol>
+<li><p>Linux在绑定端口上更加的严格，类似于先绑定0.0.0.0:9999的情况，再绑定127.0.0.1:9999，这种情况是允许的，但是如果先绑定了127.0.0.1:9999，后面再想绑定0.0.0.0:9999，那就不行了，实际上这个是Linux系统为了安全问题做的一些限制（端口挟持），这里不细说</p>
+</li>
+<li><p>对于SO_REUSEADDR选项，Linux实际上也允许完全相同的捆绑，也就是多个socket绑定到同一个ip和port，这个特性一般是只支持udp套接字的，考虑到udp套接字的多播和广播特性作出的一个让步，这里我也不展开说，因为我对广播和多播也不是很熟，大家有兴趣的话务必去参考一下Unix网络编程卷一，这本书是网络编程的圣经</p>
+</li>
+</ol>
+<h5 id="Linux-gt-3-9"><a href="#Linux-gt-3-9" class="headerlink" title="Linux &gt;= 3.9"></a>Linux &gt;= 3.9</h5><p>在这之后，Linux内核引进了SO_REUSEPORT选项，这个实现基本是也是我们在上面说的，不过也多了两个需要注意的地方：</p>
+<ol>
+<li><p>为了防止端口挟持，只用属于同一有效uid的进程可以通过设置选项来共享ip和port</p>
+</li>
+<li><p>对于共享端口的udp socket来说，如果不是广播或者多播地址，那么内核就会均匀的发数据包给每一个socket（我相信这个对想开发udp服务器的开发者而言恐怕不是好事），但是对于共享端口的tcp socket而言（一般都是多进程来监听同一个listen socket），内核将均匀的分发连接请求，也就是说内核帮我们做了简单的负载均衡，关于这一点，我在Ubuntu18.04上也做了测试，发现确实是这样的，命令的话用的nc，非常方便，注意nc在Ubuntu16.04上默认是不会打开SO_REUSEPORT选项的，所以在Ubuntu16.04上你就没有办法来测试这个了（笑）。关于这一点，可以多提一点，nginx也利用了这一点省去了之前的为了解决惊群问题而引入的accept_mutex</p>
+</li>
+</ol>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>这里简单总结了下SO_REUSEPORT这个选项，同时也涉及到了不少其他的东西，值得回味。不过简单来说，至于对开发tcp或者udp服务器的话，那么无脑记得打开SO_REUSEPORT和SO_REUSEADDR两个选项就好（笑）</p>
+<p>参考：</p>
+<ol>
+<li>Unix网络编程卷一</li>
+<li><a href="https://stackoverflow.com/questions/14388706/how-do-so-reuseaddr-and-so-reuseport-differ" target="_blank" rel="noopener">How do SO_REUSEADDR and SO_REUSEPORT differ?
+</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1004555" target="_blank" rel="noopener">告知你不为人知的 UDP：连接性和负载均衡</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/16/简单分析lambda实现原理/" rel="next" title="简单分析lambda实现原理">
+                <i class="fa fa-chevron-left"></i> 简单分析lambda实现原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">irving lwj</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#何为一个TCP连接"><span class="nav-number">2.</span> <span class="nav-text">何为一个TCP连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SO-REUSEADDR"><span class="nav-number">3.</span> <span class="nav-text">SO_REUSEADDR</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#作用一"><span class="nav-number">3.1.</span> <span class="nav-text">作用一</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#作用二"><span class="nav-number">3.2.</span> <span class="nav-text">作用二</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SO-REUSEPORT"><span class="nav-number">4.</span> <span class="nav-text">SO_REUSEPORT</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#作用"><span class="nav-number">4.1.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#带来的有趣的问题"><span class="nav-number">4.2.</span> <span class="nav-text">带来的有趣的问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux系统下的两个选项"><span class="nav-number">5.</span> <span class="nav-text">Linux系统下的两个选项</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux-lt-3-9"><span class="nav-number">5.1.</span> <span class="nav-text">Linux &lt; 3.9</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux-gt-3-9"><span class="nav-number">5.2.</span> <span class="nav-text">Linux &gt;= 3.9</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">irving lwj</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
+
+
+      <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
